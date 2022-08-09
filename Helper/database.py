@@ -5,5 +5,7 @@
 import jinja2
 from flask import *
 from flask_sqlalchemy import SQLAlchemy
+from flask_mysqldb import MySQL
+
 
 class data():
