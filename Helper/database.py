@@ -18,6 +18,8 @@ conn = engine.connect()
 # for row in words:
 #     print(row)
 
+word_details = (37610, 'EMPTY', 'EH1 M P T IY0', 2, "'_")
+
 
 def get_word_details(word):
     word = word.upper()
@@ -32,19 +34,23 @@ def get_word_details(word):
     return result
 
 
-# def syllable_matches(word):
-#     details = get_word_details(word)
-#     print(len(details))
-#     syllables = details[3]
-#     results = engine.execute(f"SELECT * FROM words WHERE SYLLABLES = {syllables}")
-#     return [get_word_details(result) for result in results]
-
-def syllable_matches(word):
-    details = get_word_details(word)
+def syllable_matches(word_details):
+    """Get words from database that match syllable count."""
+    # details = get_word_details(word)
     syllables = details[3]
-    results = engine.execute(f"SELECT * FROM words WHERE SYLLABLES = {syllables}")
-    for result in results:
-        print(result)
+    word = details[1]
+    results = engine.execute(f"SELECT * FROM words WHERE SYLLABLES = {syllables} AND WORD <> '{word}'")
+    return [result for result in results]
 
-print(get_word_details('empty'))
-print(syllable_matches('empty'))
+
+def syllables_to_list(word_details):
+    """convert syllables of a word to a list of syllables to use for matching rhymes"""
+    pronunciation = word_details[2].split()
+    print(pronunciation)
+
+# print(get_word_details('empty'))
+# print(syllable_matches('empty'))
+# print(get_word_details('empty') in syllable_matches('empty'))
+# print(len(syllable_matches('empty')))
+
+syllables_to_list(word_details)
