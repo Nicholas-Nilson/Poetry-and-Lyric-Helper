@@ -1,11 +1,13 @@
 # functions to get necessary lists from database.
 # will make a db Class with functions for each of the word criteria.
 # these will return lists
-#
-import jinja2
-from flask import *
-from flask_sqlalchemy import SQLAlchemy
-from flask_mysqldb import MySQL
 
+from sqlalchemy import create_engine
 
-class data():
+hostname='ZipCoders-MacBook-Pro.local'
+dbname='project_of_passion'
+uname='nick'
+pwd='nick123'
+
+engine = create_engine("mysql+pymysql://{user}:{pw}@{host}/{db}".format(host=hostname, db=dbname, user=uname,pw=pwd))
+
