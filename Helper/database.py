@@ -56,7 +56,7 @@ def syllables_to_list(word_details):
 
 def syllable_to_match(word_details):
     pronunciation_list = syllables_to_list(word_details)
-    print(pronunciation_list)
+    # print(pronunciation_list)
     syllables = word_details[3]
     rhyme = ''
     # if there is only 1 syllable, we want from the first vowel sound to the end.
@@ -84,8 +84,12 @@ def syllable_to_match(word_details):
     return rhyme
 
 
-def match_syllable(word_details):
-    pass
+def match_syllable(syllable: str):
+    # results = engine.execute("""SELECT * FROM words WHERE PRONUNCIATION LIKE %s""", {syllable})
+    results = engine.execute(f"SELECT * FROM words WHERE PRONUNCIATION LIKE '%%{syllable}'")
+    return [result for result in results]
+
+# SELECT * FROM words WHERE PRONUNCIATION LIKE '%AH1 V';
 
 # print(get_word_details('love'))
 # print(syllables_to_list(word_details_1))
@@ -96,6 +100,10 @@ def match_syllable(word_details):
 # print(len(syllable_matches('empty')))
 
 # syllables_to_list(word_details)
-print(syllable_to_match(word_details_1))
 
+syllable = syllable_to_match(word_details_4)
+print(syllable)
+# print(f"%{syllable}")
+# print(syllable)
+print(match_syllable(syllable))
 # print(syllables_to_list(word_details))
