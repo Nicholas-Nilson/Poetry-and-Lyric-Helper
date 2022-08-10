@@ -23,7 +23,8 @@ word_details_2 = (37610, 'EMPTY', 'EH1 M P T IY0', 2, "'_")
 word_details_4 = (27630, 'CUSTOMARY', 'K AH1 S T AH0 M EH2 R IY0', 4, "'_`_")
 
 
-def get_word_details(word):
+def get_word_details(word: str) -> tuple:
+    """Pulls word's row from database and returns a tuple of the values"""
     word = word.upper()
     result = engine.execute(f"SELECT * FROM words WHERE WORD = '{word}'")
     syllables = 0
@@ -36,7 +37,7 @@ def get_word_details(word):
     return result
 
 
-def syllable_matches(word_details):
+def syllable_matches(word_details: tuple) -> list:
     """Get words from database that match syllable count."""
     # details = get_word_details(word)
     syllables = word_details[3]
@@ -45,7 +46,9 @@ def syllable_matches(word_details):
     return [result for result in results]
 
 
-def syllables_to_list(word_details):
+# syllables_to_list may be superfluous depending on matching multiple rhymes
+# unless it is changed to take in a list.. then it would be reusable
+def syllables_to_list(word_details: tuple) -> list:
     """convert syllables of a word to a list of syllables to use for matching rhymes"""
     # if there is only one syllable, join the entire pronunciation (not including first consonant)
     # if there are multiple... decide how to pair the ARPemes.
@@ -54,7 +57,8 @@ def syllables_to_list(word_details):
     return pronunciation
 
 
-def syllable_to_match(word_details):
+def syllable_to_match(word_details) -> str:
+    """Parses syllables list to find last syllable"""
     pronunciation_list = syllables_to_list(word_details)
     # print(pronunciation_list)
     syllables = word_details[3]
@@ -84,10 +88,27 @@ def syllable_to_match(word_details):
     return rhyme
 
 
-def match_syllable(syllable: str):
+# remember to pop the searched word when presenting the list later.
+def match_syllable(syllable: str) -> list:
     # results = engine.execute("""SELECT * FROM words WHERE PRONUNCIATION LIKE %s""", {syllable})
     results = engine.execute(f"SELECT * FROM words WHERE PRONUNCIATION LIKE '%%{syllable}'")
     return [result for result in results]
+
+
+def get_rhyme_dict(word_details):
+    """Returns matches in database for each number of syllables in a word"""
+    rhyme = ""
+    pronunciation = word_details[2] # may be unnecessary
+    pronunciation_list = syllables_to_list(word_details) # store the syllable and pop it from list
+    syllables = word_details[3]
+    results_dict = {}
+    # goal here is to return a dictionary with a list of matching words as values, # of matching syllables as the key.
+    # It may be best to start with the most syllable matches as it will be categorized according to it later.
+    # Depending on how I implement this, there can be many repeat words in the multiple keys.
+    for n in range(syllables):
+
+
+
 
 # SELECT * FROM words WHERE PRONUNCIATION LIKE '%AH1 V';
 
