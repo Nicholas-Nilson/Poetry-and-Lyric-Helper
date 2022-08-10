@@ -57,13 +57,45 @@ def syllables_to_list(word_details: tuple) -> list:
     return pronunciation
 
 
-def syllable_to_match(word_details) -> str:
+# def syllable_to_match(word_details) -> str:
+#     """Parses syllables list to find last syllable"""
+#     pronunciation_list = syllables_to_list(word_details)
+#     # print(pronunciation_list)
+#     syllables = word_details[3]
+#     rhyme = ''
+#     # if there is only 1 syllable, we want from the first vowel sound to the end.
+#     # or do we -_- this may be able to work the same way forward & back
+#     if syllables == 1:
+#         i = 0
+#         while i < len(pronunciation_list):
+#             if pronunciation_list[i][-1].isdigit():
+#                 rhyme = ' '.join(pronunciation_list[i:])
+#                 # can use this when matching multiple syllables, for now only a string is needed
+#                 # pronunciation_list = pronunciation_list[:i]
+#                 break
+#             else:
+#                 i += 1
+#     # for multiple syllables, we need to get the string value of the final syllable.
+#     else:
+#         i = len(pronunciation_list) - 1
+#         while i >= 0:
+#             if pronunciation_list[i][-1].isdigit():
+#                 rhyme = ' '.join(pronunciation_list[i:])
+#                 # pronunciation_list = pronunciation_list[:i]
+#                 break
+#         else:
+#             i -= 1
+#     # pronunciation_list.append(rhyme)
+#     return rhyme
+
+def syllable_to_match(syllables: int, pronunciation_list: list) -> str:
     """Parses syllables list to find last syllable"""
-    pronunciation_list = syllables_to_list(word_details)
+    # pronunciation_list = syllables_to_list(word_details)
     # print(pronunciation_list)
-    syllables = word_details[3]
+    # syllables = word_details[3]
     rhyme = ''
     # if there is only 1 syllable, we want from the first vowel sound to the end.
+    # or do we -_- this may be able to work the same way forward & back
     if syllables == 1:
         i = 0
         while i < len(pronunciation_list):
@@ -76,8 +108,8 @@ def syllable_to_match(word_details) -> str:
                 i += 1
     # for multiple syllables, we need to get the string value of the final syllable.
     else:
-        i = len(pronunciation_list) -1
-        while i >=0:
+        i = len(pronunciation_list) - 1
+        while i >= 0:
             if pronunciation_list[i][-1].isdigit():
                 rhyme = ' '.join(pronunciation_list[i:])
                 # pronunciation_list = pronunciation_list[:i]
@@ -97,15 +129,34 @@ def match_syllable(syllable: str) -> list:
 
 def get_rhyme_dict(word_details):
     """Returns matches in database for each number of syllables in a word"""
-    rhyme = ""
-    pronunciation = word_details[2] # may be unnecessary
-    pronunciation_list = syllables_to_list(word_details) # store the syllable and pop it from list
     syllables = word_details[3]
+    pronunciation_list = syllables_to_list(word_details)
+    rhyme = ''
     results_dict = {}
-    # goal here is to return a dictionary with a list of matching words as values, # of matching syllables as the key.
-    # It may be best to start with the most syllable matches as it will be categorized according to it later.
-    # Depending on how I implement this, there can be many repeat words in the multiple keys.
-    for n in range(syllables):
+    for num in range(syllables):
+        temp = syllable_to_match(syllables, pronunciation_list)
+        indexes_to_remove = temp.split()
+        print(len(indexes_to_remove))
+
+
+    print(syllable)
+
+    # rhyme = ""
+    # pronunciation = word_details[2] # may be unnecessary
+    # pronunciation_list = syllables_to_list(word_details) # store the syllable and pop it from list
+    # syllables = word_details[3]
+    # results_dict = {}
+    # # goal here is to return a dictionary with a list of matching words as values, # of matching syllables as the key.
+    # # It may be best to start with the most syllable matches as it will be categorized according to it later.
+    # # Depending on how I implement this, there can be many repeat words in the multiple keys.
+    # for n in range(syllables):
+    #     temp = syllable_to_match(word_details)
+    #     temp, word_details[2] = temp[::-1], word_details[2][::-1]
+    #     print(temp)
+    #     rhyme = temp + ' ' + 'rhyme'
+    #     results_dict[n+1] = match_syllable(temp)
+    # return results_dict
+
 
 
 
@@ -122,9 +173,10 @@ def get_rhyme_dict(word_details):
 
 # syllables_to_list(word_details)
 
-syllable = syllable_to_match(word_details_4)
+syllable = syllable_to_match(2, syllables_to_list(word_details_2))
 print(syllable)
+print(get_rhyme_dict(word_details_2))
 # print(f"%{syllable}")
 # print(syllable)
-print(match_syllable(syllable))
+# print(match_syllable(syllable))
 # print(syllables_to_list(word_details))
