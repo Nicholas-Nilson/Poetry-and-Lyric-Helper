@@ -27,9 +27,7 @@ def get_word_details(word: str) -> tuple:
     """Pulls word's row from database and returns a tuple of the values"""
     word = word.upper()
     result = engine.execute(f"SELECT * FROM words WHERE WORD = '{word}'")
-    syllables = 0
-    pronunciation = ''
-    scansion = ''
+    # seeing how to work with LegacyRow object
     # for item in result:
     #     print(item)
     #     print(type(item))
@@ -119,7 +117,7 @@ def syllables_to_list(word_details: tuple) -> list:
 #     # pronunciation_list.append(rhyme)
 #     return rhyme
 
-def syllable_to_match(syllables: int, pronunciation_list: list) -> str:
+def syllable_to_match(pronunciation_list: list) -> str:
     """Parses syllables list to find last syllable"""
     # pronunciation_list = syllables_to_list(word_details)
     # print(pronunciation_list)
@@ -129,7 +127,6 @@ def syllable_to_match(syllables: int, pronunciation_list: list) -> str:
     # or do we -_- this may be able to work the same way forward & back
 
     i = len(pronunciation_list) - 1
-    print(i)
     while i >= 0:
         if pronunciation_list[i][-1].isdigit():
             rhyme = ' '.join(pronunciation_list[i:])
@@ -156,7 +153,7 @@ def get_rhyme_dict(word_details):
     i = 0
     while i < syllable_count:
         if i == 0:
-            temp = syllable_to_match(syllable_count, pronunciation_list)
+            temp = syllable_to_match(pronunciation_list)
             # print(temp)
             rhyme = temp
             results_dict[i+1] = match_syllable(rhyme)
@@ -168,7 +165,7 @@ def get_rhyme_dict(word_details):
             # print(pronunciation_list)
             i += 1
         else:
-            temp = syllable_to_match(syllable_count, pronunciation_list)
+            temp = syllable_to_match(pronunciation_list)
             rhyme = temp + ' ' + rhyme
             results_dict[i + 1] = match_syllable(rhyme)
             num_indexes_to_remove = len(temp.split())
@@ -178,43 +175,26 @@ def get_rhyme_dict(word_details):
     return results_dict
 
 
+# to work with this, I think I will return a dict of promoted & unpromoted secondary stress matches.
+# that way the functionality is better prepped for comparing multiple words.
+# for now, the two dict keys can either be made in to one set,
+# or a distinction can be made upon display w/ the general rule for secondary stresses
+# presented (promoted if surrounded by unstressed syllables)
+def get_scansion_matches(word_details):
+    scansion = word_details[4]
+    scansion_promoted = scansion.replace('`', "'")
+    # double check the rules and how secondary stresses are treated when
+    # the unstressesd syllables are in the same word.
+    scansion_demoted = scansion.replace('`', '_')
+    print(scansion)
+    print(scansion_promoted)
+    print(scansion_demoted)
+    results_dict = {}
+    results_dict['promoted'] = engine.execute(f"SELECT * FROM words WHERE SCANSION LIKE '{scansion_promoted}'")
+    results_dict['demoted'] = engine.execute(f"SELECT * FROM words WHERE SCANSION LIKE '{scansion_demoted}'")
+    return results_dict
 
-
-# def get_rhyme_dict(word_details):
-#     """Returns matches in database for each number of syllables in a word"""
-#     syllables = word_details[3]
-#     pronunciation_list = syllables_to_list(word_details)
-#     rhyme = ''
-#     results_dict = {}
-#     for num in range(syllables):
-#         temp = syllable_to_match(syllables, pronunciation_list)
-#         indexes_to_remove = len(temp.split())
-#         print(pronunciation_list)
-#         pronunciation_list = pronunciation_list[:-indexes_to_remove]
-#         print(pronunciation_list)
-#         rhyme = temp + ' ' + rhyme
-#         results_dict[num+1] = match_syllable(rhyme)
-#         print('why?')
-#         continue
-#     return results_dict
-
-    # rhyme = ""
-    # pronunciation = word_details[2] # may be unnecessary
-    # pronunciation_list = syllables_to_list(word_details) # store the syllable and pop it from list
-    # syllables = word_details[3]
-    # results_dict = {}
-    # # goal here is to return a dictionary with a list of matching words as values, # of matching syllables as the key.
-    # # It may be best to start with the most syllable matches as it will be categorized according to it later.
-    # # Depending on how I implement this, there can be many repeat words in the multiple keys.
-    # for n in range(syllables):
-    #     temp = syllable_to_match(word_details)
-    #     temp, word_details[2] = temp[::-1], word_details[2][::-1]
-    #     print(temp)
-    #     rhyme = temp + ' ' + 'rhyme'
-    #     results_dict[n+1] = match_syllable(temp)
-    # return results_dict
-
-
+    # results = engine.execute(f"SELECT * FROM words WHERE PRONUNCIATION LIKE '{syllable}'")
 
 
 
@@ -230,23 +210,8 @@ def get_rhyme_dict(word_details):
 
 # syllables_to_list(word_details)
 
-# syllable = syllable_to_match(4, syllables_to_list(word_details_4))
-# print(syllable)
-# print(get_rhyme_dict(word_details_1))
-# print(f"%{syllable}")
-# print(syllable)
-# print(match_syllable(syllable))
-# print(syllables_to_list(word_details))
 
-# print(get_word_details('subliminal'))
-# print(get_rhyme_dict(word_details_1))
+# dict = get_rhyme_dict(get_word_details('subliminal'))
+# print(dict[2])
 
-# details = get_word_details('subliminal')
-# print(details)
-# det_list = syllables_to_list(details)
-# det_list = det_list[:-2]
-# print(det_list)
-# print(syllable_to_match(4, det_list))
-
-dict = get_rhyme_dict(get_word_details('subliminal'))
-print(dict[3])
+get_scansion_matches(word_details_4)

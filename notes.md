@@ -26,3 +26,4 @@ To-Do:
   - Update return of lists to dicts, this will allow the code to be more modular in the future if the database gets more columns or if their 
   order ever changes.
   - in list/dict manipulation functions, be sure to remove the base word from the return lists (rhyme dict for 'subliminal' has 'subliminal')
+  - decide how to handle words with multiple pronunciations
