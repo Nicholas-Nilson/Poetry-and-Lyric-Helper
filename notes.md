@@ -25,3 +25,4 @@ To-Do:
   - Choose which phoneme implementation to use from base databases (CMU vs AZ vs converting those to a new one)
   - Update return of lists to dicts, this will allow the code to be more modular in the future if the database gets more columns or if their 
   order ever changes.
+  - in list/dict manipulation functions, be sure to remove the base word from the return lists (rhyme dict for 'subliminal' has 'subliminal')

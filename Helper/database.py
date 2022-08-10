@@ -88,6 +88,37 @@ def syllables_to_list(word_details: tuple) -> list:
 #     # pronunciation_list.append(rhyme)
 #     return rhyme
 
+# def syllable_to_match(syllables: int, pronunciation_list: list) -> str:
+#     """Parses syllables list to find last syllable"""
+#     # pronunciation_list = syllables_to_list(word_details)
+#     # print(pronunciation_list)
+#     # syllables = word_details[3]
+#     rhyme = ''
+#     # if there is only 1 syllable, we want from the first vowel sound to the end.
+#     # or do we -_- this may be able to work the same way forward & back
+#     if syllables == 1:
+#         i = 0
+#         while i < len(pronunciation_list):
+#             if pronunciation_list[i][-1].isdigit():
+#                 rhyme = ' '.join(pronunciation_list[i:])
+#                 # can use this when matching multiple syllables, for now only a string is needed
+#                 # pronunciation_list = pronunciation_list[:i]
+#                 break
+#             else:
+#                 i += 1
+#     # for multiple syllables, we need to get the string value of the final syllable.
+#     else:
+#         i = len(pronunciation_list) - 1
+#         while i >= 0:
+#             if pronunciation_list[i][-1].isdigit():
+#                 rhyme = ' '.join(pronunciation_list[i:])
+#                 # pronunciation_list = pronunciation_list[:i]
+#                 break
+#         else:
+#             i -= 1
+#     # pronunciation_list.append(rhyme)
+#     return rhyme
+
 def syllable_to_match(syllables: int, pronunciation_list: list) -> str:
     """Parses syllables list to find last syllable"""
     # pronunciation_list = syllables_to_list(word_details)
@@ -96,24 +127,14 @@ def syllable_to_match(syllables: int, pronunciation_list: list) -> str:
     rhyme = ''
     # if there is only 1 syllable, we want from the first vowel sound to the end.
     # or do we -_- this may be able to work the same way forward & back
-    if syllables == 1:
-        i = 0
-        while i < len(pronunciation_list):
-            if pronunciation_list[i][-1].isdigit():
-                rhyme = ' '.join(pronunciation_list[i:])
-                # can use this when matching multiple syllables, for now only a string is needed
-                # pronunciation_list = pronunciation_list[:i]
-                break
-            else:
-                i += 1
-    # for multiple syllables, we need to get the string value of the final syllable.
-    else:
-        i = len(pronunciation_list) - 1
-        while i >= 0:
-            if pronunciation_list[i][-1].isdigit():
-                rhyme = ' '.join(pronunciation_list[i:])
-                # pronunciation_list = pronunciation_list[:i]
-                break
+
+    i = len(pronunciation_list) - 1
+    print(i)
+    while i >= 0:
+        if pronunciation_list[i][-1].isdigit():
+            rhyme = ' '.join(pronunciation_list[i:])
+            # pronunciation_list = pronunciation_list[:i]
+            break
         else:
             i -= 1
     # pronunciation_list.append(rhyme)
@@ -128,18 +149,54 @@ def match_syllable(syllable: str) -> list:
 
 
 def get_rhyme_dict(word_details):
-    """Returns matches in database for each number of syllables in a word"""
-    syllables = word_details[3]
+    syllable_count = word_details[3]
     pronunciation_list = syllables_to_list(word_details)
     rhyme = ''
     results_dict = {}
-    for num in range(syllables):
-        temp = syllable_to_match(syllables, pronunciation_list)
-        indexes_to_remove = temp.split()
-        print(len(indexes_to_remove))
+    i = 0
+    while i < syllable_count:
+        if i == 0:
+            temp = syllable_to_match(syllable_count, pronunciation_list)
+            # print(temp)
+            rhyme = temp
+            results_dict[i+1] = match_syllable(rhyme)
+            # print(results_dict)
+            # now have to delete that last syllable from the pronunciation_list
+            num_indexes_to_remove = len(temp.split())
+            # print(num_indexes_to_remove)
+            pronunciation_list = pronunciation_list[:-num_indexes_to_remove]
+            # print(pronunciation_list)
+            i += 1
+        else:
+            temp = syllable_to_match(syllable_count, pronunciation_list)
+            rhyme = temp + ' ' + rhyme
+            results_dict[i + 1] = match_syllable(rhyme)
+            num_indexes_to_remove = len(temp.split())
+            pronunciation_list = pronunciation_list[:-num_indexes_to_remove]
+            # print(results_dict)
+            i += 1
+    return results_dict
 
 
-    print(syllable)
+
+
+# def get_rhyme_dict(word_details):
+#     """Returns matches in database for each number of syllables in a word"""
+#     syllables = word_details[3]
+#     pronunciation_list = syllables_to_list(word_details)
+#     rhyme = ''
+#     results_dict = {}
+#     for num in range(syllables):
+#         temp = syllable_to_match(syllables, pronunciation_list)
+#         indexes_to_remove = len(temp.split())
+#         print(pronunciation_list)
+#         pronunciation_list = pronunciation_list[:-indexes_to_remove]
+#         print(pronunciation_list)
+#         rhyme = temp + ' ' + rhyme
+#         results_dict[num+1] = match_syllable(rhyme)
+#         print('why?')
+#         continue
+#     return results_dict
 
     # rhyme = ""
     # pronunciation = word_details[2] # may be unnecessary
@@ -173,10 +230,23 @@ def get_rhyme_dict(word_details):
 
 # syllables_to_list(word_details)
 
-syllable = syllable_to_match(2, syllables_to_list(word_details_2))
-print(syllable)
-print(get_rhyme_dict(word_details_2))
+# syllable = syllable_to_match(4, syllables_to_list(word_details_4))
+# print(syllable)
+# print(get_rhyme_dict(word_details_1))
 # print(f"%{syllable}")
 # print(syllable)
 # print(match_syllable(syllable))
 # print(syllables_to_list(word_details))
+
+# print(get_word_details('subliminal'))
+# print(get_rhyme_dict(word_details_1))
+
+# details = get_word_details('subliminal')
+# print(details)
+# det_list = syllables_to_list(details)
+# det_list = det_list[:-2]
+# print(det_list)
+# print(syllable_to_match(4, det_list))
+
+dict = get_rhyme_dict(get_word_details('subliminal'))
+print(dict[3])
