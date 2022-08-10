@@ -18,7 +18,9 @@ conn = engine.connect()
 # for row in words:
 #     print(row)
 
-word_details = (37610, 'EMPTY', 'EH1 M P T IY0', 2, "'_")
+word_details_1 = (71786, 'LOVE', 'L AH1 V', 1, "'")
+word_details_2 = (37610, 'EMPTY', 'EH1 M P T IY0', 2, "'_")
+word_details_4 = (27630, 'CUSTOMARY', 'K AH1 S T AH0 M EH2 R IY0', 4, "'_`_")
 
 
 def get_word_details(word):
@@ -37,20 +39,63 @@ def get_word_details(word):
 def syllable_matches(word_details):
     """Get words from database that match syllable count."""
     # details = get_word_details(word)
-    syllables = details[3]
-    word = details[1]
+    syllables = word_details[3]
+    word = word_details[1]
     results = engine.execute(f"SELECT * FROM words WHERE SYLLABLES = {syllables} AND WORD <> '{word}'")
     return [result for result in results]
 
 
 def syllables_to_list(word_details):
     """convert syllables of a word to a list of syllables to use for matching rhymes"""
+    # if there is only one syllable, join the entire pronunciation (not including first consonant)
+    # if there are multiple... decide how to pair the ARPemes.
     pronunciation = word_details[2].split()
-    print(pronunciation)
+    # print(pronunciation)
+    return pronunciation
 
-# print(get_word_details('empty'))
-# print(syllable_matches('empty'))
-# print(get_word_details('empty') in syllable_matches('empty'))
+
+def syllable_to_match(word_details):
+    pronunciation_list = syllables_to_list(word_details)
+    print(pronunciation_list)
+    syllables = word_details[3]
+    rhyme = ''
+    # if there is only 1 syllable, we want from the first vowel sound to the end.
+    if syllables == 1:
+        i = 0
+        while i < len(pronunciation_list):
+            if pronunciation_list[i][-1].isdigit():
+                rhyme = ' '.join(pronunciation_list[i:])
+                # can use this when matching multiple syllables, for now only a string is needed
+                # pronunciation_list = pronunciation_list[:i]
+                break
+            else:
+                i += 1
+    # for multiple syllables, we need to get the string value of the final syllable.
+    else:
+        i = len(pronunciation_list) -1
+        while i >=0:
+            if pronunciation_list[i][-1].isdigit():
+                rhyme = ' '.join(pronunciation_list[i:])
+                # pronunciation_list = pronunciation_list[:i]
+                break
+        else:
+            i -= 1
+    # pronunciation_list.append(rhyme)
+    return rhyme
+
+
+def match_syllable(word_details):
+    pass
+
+# print(get_word_details('love'))
+# print(syllables_to_list(word_details_1))
+# print(syllable_matches(word_details))
+
+# making sure
+# print(get_word_details('customary') in syllable_matches(word_details))
 # print(len(syllable_matches('empty')))
 
-syllables_to_list(word_details)
+# syllables_to_list(word_details)
+print(syllable_to_match(word_details_1))
+
+# print(syllables_to_list(word_details))

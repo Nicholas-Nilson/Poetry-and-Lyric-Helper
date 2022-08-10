@@ -23,4 +23,5 @@ To-Do:
 - form the database from available resources.
   - check which sql implementation will allow adding additional columns later (for wordnet synsets or a thesaurus)
   - Choose which phoneme implementation to use from base databases (CMU vs AZ vs converting those to a new one)
-  - 
+  - Update return of lists to dicts, this will allow the code to be more modular in the future if the database gets more columns or if their 
+  order ever changes.
