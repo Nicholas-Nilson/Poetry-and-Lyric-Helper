@@ -68,10 +68,13 @@ def get_close_matches_scansion(word: str) -> dict:
     return close_matches_scansion
 
 
-# rhyme_dict = get_close_matches_rhyme('collusion')
-# scansion = get_close_matches_scansion('verify')
+# rhyme_dict = get_close_matches_rhyme('agitated')
+# scansion = get_close_matches_scansion('agitated')
+print(database.get_word_details('amputated'))
 # scansion = get_close_matches_scansion('verify')
 # print(scansion)
+print(rhyme_dict[3])
+print(scansion)
 # print(scansion[2])
 # print(rhyme_dict)
 # print(details_list_to_word_list(database.syllable_matches(database.get_word_details('customary'))))

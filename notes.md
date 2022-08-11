@@ -29,6 +29,8 @@ To-Do:
   - decide how to handle words with multiple pronunciations
   - make database & helper functions in to a class?
   - make one more .py file for app.routes.
+  - refactor code so it isn't constantly returning the same list/dictionaries repeatedly.
 
 Helper functions to return exact & two different types of close matches.
 
+- incorporate an api in to the search result page for the word passed. the information from the single result api calls can be used for a lot of information
