@@ -214,10 +214,19 @@ def get_scansion_matches(word_details):
 # syllables_to_list(word_details)
 
 
-# dict = get_rhyme_dict(get_word_details('subliminal'))
-# print(dict[2])
+# dict = get_rhyme_dict(get_word_details('helper'))
+# print(dict[1])
 
-details = get_word_details('ulterior')
-print(get_scansion_matches(details)['exact'])
+# details = get_word_details('ulterior')
+# print(get_scansion_matches(details)['exact'])
 
 # print(get_word_details('criminal'))
+
+# print(get_scansion_matches(get_word_details('helper')))
+# scansion = get_scansion_matches(get_word_details('verify'))
+# scansion = get_scansion_matches(get_word_details('tainted'))
+# print(scansion.keys())
+# print(scansion['promoted'])
+# print(scansion['demoted'])
+# print(scansion['exact'])
+# print(scansion.keys())

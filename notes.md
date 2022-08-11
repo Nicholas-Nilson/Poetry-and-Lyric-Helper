@@ -27,3 +27,8 @@ To-Do:
   order ever changes.
   - in list/dict manipulation functions, be sure to remove the base word from the return lists (rhyme dict for 'subliminal' has 'subliminal')
   - decide how to handle words with multiple pronunciations
+  - make database & helper functions in to a class?
+  - make one more .py file for app.routes.
+
+Helper functions to return exact & two different types of close matches.
+
