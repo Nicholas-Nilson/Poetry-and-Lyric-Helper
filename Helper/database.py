@@ -183,22 +183,23 @@ def get_rhyme_dict(word_details):
 def get_scansion_matches(word_details):
     scansion = word_details[4]
     syllable_count = word_details[3]
-    print(scansion)
-    scansion_promoted = scansion.replace('s', "p")
     # double check the rules and how secondary stresses are treated when
     # the unstressesd syllables are in the same word.
-    scansion_demoted = scansion.replace('s', 'u')
     # print(scansion)
-    print(scansion_promoted)
-    print(scansion_demoted)
     results_dict = {}
-    results_dict['promoted'] = [result for result in engine.execute(f"SELECT * FROM words WHERE SCANSION LIKE '%%{scansion_promoted}' AND SYLLABLES = {syllable_count}")]
-    results_dict['demoted'] = [result for result in engine.execute(f"SELECT * FROM words WHERE SCANSION LIKE '%%{scansion_demoted}' AND SYLLABLES = {syllable_count}")]
+    if 's' in scansion:
+        scansion_promoted = scansion.replace('s', "p")
+        scansion_demoted = scansion.replace('s', 'u')
+        # print(scansion_promoted)
+        # print(scansion_demoted)
+        results_dict['promoted'] = [result for result in engine.execute(
+            f"SELECT * FROM words WHERE SCANSION LIKE '%%{scansion_promoted}' AND SYLLABLES = {syllable_count}")]
+        results_dict['demoted'] = [result for result in engine.execute(
+            f"SELECT * FROM words WHERE SCANSION LIKE '%%{scansion_demoted}' AND SYLLABLES = {syllable_count}")]
+    results_dict['exact'] = [result for result in engine.execute(f"SELECT * FROM words WHERE SCANSION LIKE '%%{scansion}' AND SYLLABLES = {syllable_count}")]
     return results_dict
 
     # results = engine.execute(f"SELECT * FROM words WHERE PRONUNCIATION LIKE '{syllable}'")
-
-
 
 # SELECT * FROM words WHERE PRONUNCIATION LIKE '%AH1 V';
 
@@ -217,5 +218,6 @@ def get_scansion_matches(word_details):
 # print(dict[2])
 
 details = get_word_details('ulterior')
-# print(get_scansion_matches(details)['promoted'])
+print(get_scansion_matches(details)['exact'])
+
 # print(get_word_details('criminal'))
