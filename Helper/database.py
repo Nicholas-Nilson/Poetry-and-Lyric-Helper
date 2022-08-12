@@ -40,7 +40,8 @@ def create_word_details_from_object(word_object: words) -> tuple:
 
 def syllable_matches(word_object: words) -> list:
     """Get words from database that match syllable count."""
-    results = words.query.filter(words.SYLLABLES == word_object.SYLLABLES).order_by(words.WORD.asc())
+    results = words.query.filter(words.SYLLABLES == word_object.SYLLABLES, words.WORD != word_object.WORD).all()
+    results = sorted(results, key=lambda x: x.WORD)
     return results
 
 
@@ -138,14 +139,16 @@ def syllable_to_match(pronunciation_list: list) -> str:
 
 
 # remember to pop the searched word when presenting the list later.
-def match_syllable(syllable: str) -> list:
-    results = words.query.filter(words.PRONUNCIATION.endswith(syllable)).all()
+def match_syllable(word_object, syllable: str) -> list:
+    results = words.query.filter(words.PRONUNCIATION.endswith(syllable), words.WORD != word_object.WORD).all()
     return  results
 
 
 def get_rhyme_dict(word_object: words) -> dict:
     """Given a word, return a dictionary with number of syllables rhymed as the key
     and matching words as values"""
+    # this function could also match by syllables to avoid cleaning up later, but eventually
+    # I would like an option that lets a user see matching rhymes of variable syllable counts.
     syllable_count = word_object.SYLLABLES
     pronunciation_list = syllables_to_list(word_object)
     rhyme = ''
@@ -154,20 +157,25 @@ def get_rhyme_dict(word_object: words) -> dict:
     while i < syllable_count:
         if i == 0:
             temp = syllable_to_match(pronunciation_list)
-            # print(temp)
             rhyme = temp
-            results_dict[i+1] = match_syllable(rhyme)
-            # print(results_dict)
+            results_dict[i+1] = match_syllable(word_object, rhyme)
             # now have to delete that last syllable from the pronunciation_list
             num_indexes_to_remove = len(temp.split())
-            # print(num_indexes_to_remove)
             pronunciation_list = pronunciation_list[:-num_indexes_to_remove]
-            # print(pronunciation_list)
             i += 1
         else:
+            # needs a check for if a math is in a prior key, if so... pop it from that earlier key.
             temp = syllable_to_match(pronunciation_list)
             rhyme = temp + ' ' + rhyme
-            results_dict[i + 1] = match_syllable(rhyme)
+            print(rhyme)
+            # results_dict[i + 1] = match_syllable(rhyme)
+            value_list = match_syllable(word_object, rhyme)
+            for word in value_list:
+                if word in results_dict[i]:
+                    results_dict[i].remove(word)
+                else:
+                    value_list.append(word)
+            results_dict[i+1] = value_list
             num_indexes_to_remove = len(temp.split())
             pronunciation_list = pronunciation_list[:-num_indexes_to_remove]
             # print(results_dict)
@@ -228,23 +236,37 @@ def get_scansion_matches(word_object: words) -> dict:
 # print(scansion['exact'])
 # print(scansion.keys())
 
-test = get_word_details('antiquated')
+test = get_word_details('immolation')
 # for word in syllable_matches(test):
 #     print(word.WORD)
-syllable = syllable_to_match(syllables_to_list(test))
+# syllable = syllable_to_match(syllables_to_list(test))
+# print(syllable)
 # print(syllable)
 # syl_matches = match_syllable(syllable)
 # for word in syl_matches:
 #     print(word.WORD)
 
-r_dict = get_rhyme_dict(test)
+
 # print(r_dict)
 #
 # for word in r_dict[2]:
 #     print(word.WORD)
 
-s_dict = get_scansion_matches(test)
-print(s_dict)
+# s_dict = get_scansion_matches(test)
+# print(s_dict)
+#
+# for word in s_dict['promoted']:
+#     print(word.WORD)
+# print(syllable_matches(test))
+test = get_word_details('apology')
+r_dict = get_rhyme_dict(test)
+keys = list(r_dict.keys())
+for key in keys:
+    print([word.WORD for word in r_dict[key]])
+# print(get_word_details('cytology').PRONUNCIATION)
+# print(get_word_details('apology').PRONUNCIATION)
+# rhymes = match_syllable("AA1 L AH0 JH IY2")
 
-for word in s_dict['promoted']:
-    print(word.WORD)
+# get_rhyme_dict(test)
+# for word in rhymes:
+#     print(word.WORD)
