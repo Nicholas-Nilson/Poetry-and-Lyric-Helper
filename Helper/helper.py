@@ -1,8 +1,8 @@
 import database
+from database import words
 import cryptography
 
 # Functions to sort through lists returned by database.
-
 
 def get_syllables_match_list(word) -> list:
     db = database

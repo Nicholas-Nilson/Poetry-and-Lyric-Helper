@@ -6,24 +6,9 @@ from Helper.app import app
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine, Table
 
-hostname='ZipCoders-MacBook-Pro.local'
-dbname='project_of_passion'
-uname='nick'
-pwd='nick123'
 
-# engine = create_engine("mysql+pymysql://{user}:{pw}@{host}/{db}".format(host=hostname, db=dbname, user=uname,pw=pwd))
 db = SQLAlchemy(app)
-# metadata = sqlalchemy.MetaData(bind=engine)
-# conn = engine.connect()
 
-# query = 'SELECT * FROM words'
-# words = engine.execute(query)
-# for row in words:
-#     print(row)
-
-# word_details_1 = (71786, 'LOVE', 'L AH1 V', 1, "'")
-# word_details_2 = (37610, 'EMPTY', 'EH1 M P T IY0', 2, "'_")
-# word_details_4 = (27630, 'CUSTOMARY', 'K AH1 S T AH0 M EH2 R IY0', 4, "'_`_")
 
 class words(db.Model):
     index = db.Column(db.Integer, primary_key=True)
@@ -42,13 +27,8 @@ class words(db.Model):
 def get_word_details(word: str) -> object:
     """Pulls word's row from database and returns a tuple of the values"""
     word = word.upper()
-    # result = engine.execute(f"SELECT * FROM words WHERE WORD = '{word}'")
     result = words.query.filter(words.WORD == word).first()
-    # seeing how to work with LegacyRow object
-    # for item in result:
-    #     print(item)
-    #     print(type(item))
-    # result = list(result)[0]
+
     return result
 
 
@@ -58,34 +38,14 @@ def create_word_details_from_object(word_object: words) -> tuple:
     return word_details
 
 
-# def syllable_matches(word_details: tuple) -> list:
-#     """Get words from database that match syllable count."""
-#     # details = get_word_details(word)
-#     syllables = word_details[3]
-#     word = word_details[1]
-#     results = engine.execute(f"SELECT * FROM words WHERE SYLLABLES = {syllables} AND WORD <> '{word}'")
-#     return [result for result in results]
-
 def syllable_matches(word_object: words) -> list:
     """Get words from database that match syllable count."""
-    # details = get_word_details(word)
-    syllables = word_object.SYLLABLES
-    word = word_object.WORD
-    # results = engine.execute(f"SELECT * FROM words WHERE SYLLABLES = {syllables} AND WORD <> '{word}'")
     results = words.query.filter(words.SYLLABLES == word_object.SYLLABLES).order_by(words.WORD.asc())
     return results
 
 
 # syllables_to_list may be superfluous depending on matching multiple rhymes
 # unless it is changed to take in a list.. then it would be reusable
-# def syllables_to_list(word_details: tuple) -> list:
-#     """convert syllables of a word to a list of syllables to use for matching rhymes"""
-#     # if there is only one syllable, join the entire pronunciation (not including first consonant)
-#     # if there are multiple... decide how to pair the ARPemes.
-#     pronunciation = word_details[2].split()
-#     # print(pronunciation)
-#     return pronunciation
-
 def syllables_to_list(word_object: words) -> list:
     """convert syllables of a word to a list of syllables to use for matching rhymes"""
     # if there is only one syllable, join the entire pronunciation (not including first consonant)
@@ -165,7 +125,6 @@ def syllable_to_match(pronunciation_list: list) -> str:
     rhyme = ''
     # if there is only 1 syllable, we want from the first vowel sound to the end.
     # or do we -_- this may be able to work the same way forward & back
-
     i = len(pronunciation_list) - 1
     while i >= 0:
         if pronunciation_list[i][-1].isdigit():
@@ -179,21 +138,16 @@ def syllable_to_match(pronunciation_list: list) -> str:
 
 
 # remember to pop the searched word when presenting the list later.
-# def match_syllable(syllable: str) -> list:
-#     # results = engine.execute("""SELECT * FROM words WHERE PRONUNCIATION LIKE %s""", {syllable})
-#     results = engine.execute(f"SELECT * FROM words WHERE PRONUNCIATION LIKE '%%{syllable}'")
-#     return [result for result in results]
-
 def match_syllable(syllable: str) -> list:
-    # results = engine.execute("""SELECT * FROM words WHERE PRONUNCIATION LIKE %s""", {syllable})
-    # results = words.query.filter(words.PRONUNCIATION.like(syllable)).all()
     results = words.query.filter(words.PRONUNCIATION.endswith(syllable)).all()
     return  results
 
 
-def get_rhyme_dict(word_details):
-    syllable_count = word_details[3]
-    pronunciation_list = syllables_to_list(word_details)
+def get_rhyme_dict(word_object: words) -> dict:
+    """Given a word, return a dictionary with number of syllables rhymed as the key
+    and matching words as values"""
+    syllable_count = word_object.SYLLABLES
+    pronunciation_list = syllables_to_list(word_object)
     rhyme = ''
     results_dict = {}
     i = 0
@@ -226,28 +180,25 @@ def get_rhyme_dict(word_details):
 # for now, the two dict keys can either be made in to one set,
 # or a distinction can be made upon display w/ the general rule for secondary stresses
 # presented (promoted if surrounded by unstressed syllables)
-def get_scansion_matches(word_details):
-    scansion = word_details[4]
-    syllable_count = word_details[3]
+def get_scansion_matches(word_object: words) -> dict:
+    """Given a word, return words with matching stress pattern. If the word contains
+    a secondary stress, return additional keys with the s-stress promoted & demoted"""
+    # scansion = word_details[4]
+    # syllable_count = word_details[3]
     # double check the rules and how secondary stresses are treated when
     # the unstressesd syllables are in the same word.
     # print(scansion)
     results_dict = {}
-    if 's' in scansion:
-        scansion_promoted = scansion.replace('s', "p")
-        scansion_demoted = scansion.replace('s', 'u')
-        # print(scansion_promoted)
-        # print(scansion_demoted)
-        results_dict['promoted'] = [result for result in engine.execute(
-            f"SELECT * FROM words WHERE SCANSION LIKE '%%{scansion_promoted}' AND SYLLABLES = {syllable_count}")]
-        results_dict['demoted'] = [result for result in engine.execute(
-            f"SELECT * FROM words WHERE SCANSION LIKE '%%{scansion_demoted}' AND SYLLABLES = {syllable_count}")]
-    results_dict['exact'] = [result for result in engine.execute(f"SELECT * FROM words WHERE SCANSION LIKE '%%{scansion}' AND SYLLABLES = {syllable_count}")]
+    if 's' in word_object.SCANSION:
+        scansion_promoted = word_object.SCANSION.replace('s', "p")
+        scansion_demoted = word_object.SCANSION.replace('s', 'u')
+        results_dict['promoted'] = words.query.filter(words.SCANSION == scansion_promoted).all()
+        results_dict['demoted'] = words.query.filter(words.SCANSION == scansion_demoted).all()
+    results_dict['exact'] = words.query.filter(words.SCANSION == word_object.SCANSION).all()
     return results_dict
 
-    # results = engine.execute(f"SELECT * FROM words WHERE PRONUNCIATION LIKE '{syllable}'")
 
-# SELECT * FROM words WHERE PRONUNCIATION LIKE '%AH1 V';
+
 
 # print(get_word_details('love'))
 # print(syllables_to_list(word_details_1))
@@ -277,9 +228,23 @@ def get_scansion_matches(word_details):
 # print(scansion['exact'])
 # print(scansion.keys())
 
-test = get_word_details('obtuse')
+test = get_word_details('antiquated')
 # for word in syllable_matches(test):
 #     print(word.WORD)
 syllable = syllable_to_match(syllables_to_list(test))
 # print(syllable)
-print(match_syllable(syllable))
+# syl_matches = match_syllable(syllable)
+# for word in syl_matches:
+#     print(word.WORD)
+
+r_dict = get_rhyme_dict(test)
+# print(r_dict)
+#
+# for word in r_dict[2]:
+#     print(word.WORD)
+
+s_dict = get_scansion_matches(test)
+print(s_dict)
+
+for word in s_dict['promoted']:
+    print(word.WORD)
