@@ -167,7 +167,6 @@ def get_rhyme_dict(word_object: words) -> dict:
             # needs a check for if a math is in a prior key, if so... pop it from that earlier key.
             temp = syllable_to_match(pronunciation_list)
             rhyme = temp + ' ' + rhyme
-            print(rhyme)
             # results_dict[i + 1] = match_syllable(rhyme)
             value_list = match_syllable(word_object, rhyme)
             for word in value_list:
@@ -258,11 +257,11 @@ test = get_word_details('immolation')
 # for word in s_dict['promoted']:
 #     print(word.WORD)
 # print(syllable_matches(test))
-test = get_word_details('apology')
-r_dict = get_rhyme_dict(test)
-keys = list(r_dict.keys())
-for key in keys:
-    print([word.WORD for word in r_dict[key]])
+# test = get_word_details('apology')
+# r_dict = get_rhyme_dict(test)
+# keys = list(r_dict.keys())
+# for key in keys:
+#     print([word.WORD for word in r_dict[key]])
 # print(get_word_details('cytology').PRONUNCIATION)
 # print(get_word_details('apology').PRONUNCIATION)
 # rhymes = match_syllable("AA1 L AH0 JH IY2")
