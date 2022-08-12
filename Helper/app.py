@@ -15,5 +15,5 @@ app.config.update(
     # MYSQL_PASSWORD='nick123',
     # MYSQL_HOST = 'ZipCoders-MacBook-Pro.local',
     # MYSQL_DB = 'project_of_passion',
-    SQLALCHEMY_DATABASE_URI='sqlite:///' + os.path.join(basedir) + '/data/words.db'
+    SQLALCHEMY_DATABASE_URI='sqlite:///' + os.path.join(basedir) + '/data/wordsdb.db'
 )
