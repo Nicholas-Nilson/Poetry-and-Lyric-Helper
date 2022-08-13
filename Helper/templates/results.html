@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+<!--      objects passed in: word=word, exact_dict=exact_dict,
+                           scansion_set=scansion_set, rhyme_dict=rhyme_dict  -->
+<div>
+    <h1> {{ word }}</h1>
+</div>
+
+<!-- Insert a line across the page here! -->
+<!-- Exact matches:
+        - Find numer of keys?
+        - Check for empty lists.
+        - Display: EXACT: how many syllables are matched (key)
+        - then rows & columns of exact matches
+        - Iterate through keys and display the same thing. -->
+
+<div class="exact matches">
+    {% for key, value in exact_dict.items() %}
+    <h2>Exact Matches: {{key}} syllable(s) rhyme {</h2>
+    {% for word in value %}
+    {{ word }}
+</div>

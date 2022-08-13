@@ -93,6 +93,7 @@ def convert_dict_to_camel_case(input_dict: dict) -> dict:
 @app.route('/results/<word>')
 def all_together_now(word):
     word_object = database.get_word_details(word)
+    syllables = word_object.SYLLABLES
     syllable_count_list = get_syllables_match_list(word_object)
     rhyme_dict = get_close_matches_rhyme(word_object, syllable_count_list)
     scansion_dict = get_close_matches_scansion(word_object, syllable_count_list)
@@ -111,10 +112,32 @@ def all_together_now(word):
     #     print(key)
     #     for word in rhyme_dict[key]:
     #         print(word)
-    return render_template("results.html", word=word, exact_dict=exact_dict,
-                           scansion_set=scansion_set, rhyme_dict=rhyme_dict)
+    return render_template("results.html", word=word, syllables=syllables,
+                           exact_dict=exact_dict, scansion_set=scansion_set,
+                           rhyme_dict=rhyme_dict)
+# above needs syllable count passed in!!!! so we know how long the params will be.
 
 
+# have to create params like: exact_1, exact_2, exact_3
+# this... might actually be superfluous. time will tell.
+def create_params_from_dict(input_dict, param_name):
+    keys = list(input_dict.keys())
+    params = {}
+    for key in keys:
+        params[f'{param_name}_{key}'] = input_dict[key]
+    return params
+
+
+def create_param_from_list(input_list, param_name):
+    params = {f'{param_name}': input_list}
+    return params
+
+
+def create_content(exact_dict, rhyme_dict, scansion_set):
+    content = {}
+    params = ['exact', 'rhyme', 'scansion']
+    for param in params:
+        pass
 
 
 
@@ -158,4 +181,17 @@ def all_together_now(word):
 # # print(scansion_dict['demoted'])
 # print(camel_list)
 
-all_together_now('apology')
+# all_together_now('apology')
+
+# params = create_params_from_dict(rhyme_dict, 'rhyme')
+# param_keys = list(params.keys())
+# print(param_keys)
+# print(params['rhyme_3'])
+
+# params = create_param_from_list(set_list, 'scansion')
+# print(params)
+
+# $ python3.9 -m venv venv
+# $ source venv/bin/activate
+# $ pip install -r requirements.txt
+# $ ./run.sh
