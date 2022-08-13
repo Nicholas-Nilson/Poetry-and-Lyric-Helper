@@ -279,7 +279,7 @@ def get_all_words() -> list:
 
 # data = get_all_words()
 # print(len(data))
-pronunciation_string = "AA1 L AH0 JH IY2"
+# pronunciation_string = "AA1 L AH0 JH IY2"
 
 
 def replace_numbers(pronunciation):
@@ -293,6 +293,7 @@ def replace_numbers(pronunciation):
 
 # there is DEFINITELY a faster way to do this. Looks like importing cases
 # would have worked, but it's done.
+
 # def replace_all_pronunciations():
 #     data = get_all_words()
 #     for word in data:

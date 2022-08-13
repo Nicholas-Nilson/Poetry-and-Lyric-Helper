@@ -34,3 +34,6 @@ To-Do:
 Helper functions to return exact & two different types of close matches.
 
 - incorporate an api in to the search result page for the word passed. the information from the single result api calls can be used for a lot of information
+- when passing the dicts to HTML, only the set of scansion_dict needs to be passed.
+- rhyme_dict gets passed as it
+- exact_matches gets passed as is.'

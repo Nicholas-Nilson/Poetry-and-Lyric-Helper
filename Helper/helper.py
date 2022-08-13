@@ -64,6 +64,9 @@ def convert_dict_to_set(input_dict: dict) -> list:
     return sorted(output)
 
 
+def convert_words_to_camel_case(word):
+    return word.title()
+
 
 # word_details_1 = (71786, 'LOVE', 'L AH1 V', 1, "'")
 # rhyme_dict = get_close_matches_rhyme('agitated')
@@ -94,4 +97,5 @@ scansion_dict = get_close_matches_scansion(test, test_list)
 # print(exact_dict)
 # print(rhyme_dict[3])
 # print(scansion_dict)
-print(get_exact_matches(test, get_syllables_match_list(test), rhyme_dict, scansion_dict))
+
+print(get_exact_matches(test, get_syllables_match_list(test), rhyme_dict, scansion_dict)[2])
