@@ -53,7 +53,6 @@ def syllables_to_list(word_object: words) -> list:
     # if there is only one syllable, join the entire pronunciation (not including first consonant)
     # if there are multiple... decide how to pair the ARPemes.
     pronunciation = word_object.PRONUNCIATION.split()
-    # print(pronunciation)
     return pronunciation
 
 
@@ -129,7 +128,7 @@ def syllable_to_match(pronunciation_list: list) -> str:
     # or do we -_- this may be able to work the same way forward & back
     i = len(pronunciation_list) - 1
     while i >= 0:
-        if pronunciation_list[i][-1].isdigit():
+        if pronunciation_list[i][0] in ['A', 'E', 'I', 'O', 'U']:
             rhyme = ' '.join(pronunciation_list[i:])
             # pronunciation_list = pronunciation_list[:i]
             break
@@ -273,7 +272,7 @@ test = get_word_details('immolation')
 
 # have to update PRONUNCIATION for each word to not include numbers.
 # checking for vowels can fill in for finding where a syllable is.
-
+# functions below are for getting that job done.
 def get_all_words() -> list:
     results = words.query.all()
     return results
@@ -307,3 +306,10 @@ def replace_numbers(pronunciation):
 # data = get_all_words()
 # for word in data:
 #     print(word.PRONUNCIATION)
+
+# test = get_word_details('apology')
+# test = syllables_to_list(test)
+# test_dict = get_rhyme_dict(test)
+# print(test.SYLLABLES)
+# for word in test_dict[3]:
+#     print(word.WORD)
