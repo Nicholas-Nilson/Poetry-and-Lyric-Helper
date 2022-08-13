@@ -1,6 +1,7 @@
 # NEEDS: app name, SQL db location, site name, site description
 from flask import Flask, render_template, request, url_for, redirect
 import os
+from Helper.database import db
 from os.path import join, dirname, realpath
 
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -13,3 +14,5 @@ app.config.update(
     SITE_DESCRIPTION="A search app for finding words matching any or all of; rhyme, syllables, stresses.",
     SQLALCHEMY_DATABASE_URI='sqlite:///' + os.path.join(basedir) + '/data/wordsdb.db'
 )
+
+

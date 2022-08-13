@@ -1,8 +1,9 @@
 from flask import *
 
-import database
-from database import words
+import Helper.database as database
+from Helper.database import words
 from Helper.app import app
+
 
 # Functions to sort through lists returned by database.
 
@@ -116,6 +117,11 @@ def all_together_now(word):
                            exact_dict=exact_dict, scansion_set=scansion_set,
                            rhyme_dict=rhyme_dict)
 # above needs syllable count passed in!!!! so we know how long the params will be.
+
+
+@app.route('/')
+def index():
+    return render_template("layout.html")
 
 
 # have to create params like: exact_1, exact_2, exact_3

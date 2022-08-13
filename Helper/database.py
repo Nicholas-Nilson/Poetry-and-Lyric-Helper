@@ -314,3 +314,5 @@ def replace_numbers(pronunciation):
 # print(test.SYLLABLES)
 # for word in test_dict[3]:
 #     print(word.WORD)
+
+db.init_app(app)
