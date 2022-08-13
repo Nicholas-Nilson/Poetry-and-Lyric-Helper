@@ -105,6 +105,12 @@ def all_together_now(word):
     scansion_set = convert_list_to_camel_case(scansion_set)
     exact_dict = convert_dict_to_camel_case(exact_dict)
     word = convert_words_to_camel_case(word_object.WORD)
+
+    # rhyme_keys = list(exact_dict.keys())
+    # for key in rhyme_keys:
+    #     print(key)
+    #     for word in rhyme_dict[key]:
+    #         print(word)
     return render_template("results.html", word=word, exact_dict=exact_dict,
                            scansion_set=scansion_set, rhyme_dict=rhyme_dict)
 
@@ -132,8 +138,8 @@ def all_together_now(word):
 # test_list = get_syllables_match_list(test)
 # rhyme_dict = get_close_matches_rhyme(test, test_list)
 # scansion_dict = get_close_matches_scansion(test, test_list)
-
 # set_list = convert_dict_to_set(scansion_dict)
+
 # print({x for v in scansion_dict.values() for x in v})
 # print(scansion_dict.values())
 # print(convert_dict_to_set(scansion_dict))
@@ -147,7 +153,9 @@ def all_together_now(word):
 
 # camel_dict = convert_dict_to_camel_case(rhyme_dict)
 # camel_list = convert_list_to_camel_case(set_list)
-# print(test_list)
+# # print(test_list)
 # print(camel_dict[3])
-# print(scansion_dict['demoted'])
+# # print(scansion_dict['demoted'])
 # print(camel_list)
+
+all_together_now('apology')
