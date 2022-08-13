@@ -25,7 +25,7 @@ class words(db.Model):
         self.SCANSION = scansion
 
 
-def get_word_details(word: str) -> object:
+def get_word_details(word: str) -> words:
     """Pulls word's row from database and returns a tuple of the values"""
     word = word.upper()
     result = words.query.filter(words.WORD == word).first()

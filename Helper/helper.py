@@ -1,5 +1,8 @@
+from flask import *
+
 import database
 from database import words
+from Helper.app import app
 
 # Functions to sort through lists returned by database.
 
@@ -60,12 +63,53 @@ def get_close_matches_scansion(word_object: words, syllable_count_matches) -> di
 
 
 def convert_dict_to_set(input_dict: dict) -> list:
-    output = {word for vlist in input_dict.values() for word in vlist}
+    output = {word for d_list in input_dict.values() for word in d_list}
     return sorted(output)
 
 
 def convert_words_to_camel_case(word):
     return word.title()
+
+
+def convert_list_to_camel_case(input_list: list) -> list:
+    output_list = [convert_words_to_camel_case(word) for word in input_list]
+    return output_list
+
+
+def convert_dict_to_camel_case(input_dict: dict) -> dict:
+    keys = list(input_dict.keys())
+    output_dict = {}
+    for key in keys:
+        output_dict[key] = [convert_words_to_camel_case(word) for word in input_dict[key]]
+    return output_dict
+
+
+# the one function to interact with the website:
+# get word_object, get syllable list, get scansion_dict, get rhyme_dict,
+# get exact_dict, convert scansion_dict to scansion_set, convert
+# scansion, rhyme, and exacts to camel case, and return those!
+
+# can 'GET' be passed in to all these functions?! May need to restructure.
+@app.route('/results/<word>')
+def all_together_now(word):
+    word_object = database.get_word_details(word)
+    syllable_count_list = get_syllables_match_list(word_object)
+    rhyme_dict = get_close_matches_rhyme(word_object, syllable_count_list)
+    scansion_dict = get_close_matches_scansion(word_object, syllable_count_list)
+    # objects for comparison are set!
+    exact_dict = get_exact_matches(word_object, syllable_count_list, rhyme_dict, scansion_dict)
+    # now to convert scansion dict to a set
+    # and convert both dicts and the set to camel case
+    rhyme_dict = convert_dict_to_camel_case(rhyme_dict)
+    scansion_set = convert_dict_to_set(scansion_dict)
+    scansion_set = convert_list_to_camel_case(scansion_set)
+    exact_dict = convert_dict_to_camel_case(exact_dict)
+    word = convert_words_to_camel_case(word_object.WORD)
+    return render_template("results.html", word=word, exact_dict=exact_dict,
+                           scansion_set=scansion_set, rhyme_dict=rhyme_dict)
+
+
+
 
 
 # word_details_1 = (71786, 'LOVE', 'L AH1 V', 1, "'")
@@ -84,11 +128,12 @@ def convert_words_to_camel_case(word):
 # print(rhyme_dict)
 # print(details_list_to_word_list(database.syllable_matches(database.get_word_details('customary'))))
 
-test = database.get_word_details('anthology')
-# print(test)
-test_list = get_syllables_match_list(test)
-rhyme_dict = get_close_matches_rhyme(test, test_list)
-scansion_dict = get_close_matches_scansion(test, test_list)
+# test = database.get_word_details('anthology')
+# test_list = get_syllables_match_list(test)
+# rhyme_dict = get_close_matches_rhyme(test, test_list)
+# scansion_dict = get_close_matches_scansion(test, test_list)
+
+# set_list = convert_dict_to_set(scansion_dict)
 # print({x for v in scansion_dict.values() for x in v})
 # print(scansion_dict.values())
 # print(convert_dict_to_set(scansion_dict))
@@ -98,4 +143,11 @@ scansion_dict = get_close_matches_scansion(test, test_list)
 # print(rhyme_dict[3])
 # print(scansion_dict)
 
-print(get_exact_matches(test, get_syllables_match_list(test), rhyme_dict, scansion_dict)[2])
+# print(get_exact_matches(test, get_syllables_match_list(test), rhyme_dict, scansion_dict)[2])
+
+# camel_dict = convert_dict_to_camel_case(rhyme_dict)
+# camel_list = convert_list_to_camel_case(set_list)
+# print(test_list)
+# print(camel_dict[3])
+# print(scansion_dict['demoted'])
+# print(camel_list)
