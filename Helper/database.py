@@ -5,6 +5,7 @@ import sqlalchemy
 from Helper.app import app
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine, Table
+import re
 
 
 db = SQLAlchemy(app)
@@ -269,3 +270,40 @@ test = get_word_details('immolation')
 # get_rhyme_dict(test)
 # for word in rhymes:
 #     print(word.WORD)
+
+# have to update PRONUNCIATION for each word to not include numbers.
+# checking for vowels can fill in for finding where a syllable is.
+
+def get_all_words() -> list:
+    results = words.query.all()
+    return results
+
+# data = get_all_words()
+# print(len(data))
+pronunciation_string = "AA1 L AH0 JH IY2"
+
+
+def replace_numbers(pronunciation):
+    nums_removed = re.sub(r'[0-9]', '', pronunciation)
+    return nums_removed
+
+
+# rep_string = replace_numbers(pronunciation_string)
+# print(rep_string)
+
+
+# there is DEFINITELY a faster way to do this. Looks like importing cases
+# would have worked, but it's done.
+# def replace_all_pronunciations():
+#     data = get_all_words()
+#     for word in data:
+#         word.PRONUNCIATION = replace_numbers(word.PRONUNCIATION)
+#         print(word.WORD)
+#         db.session.commit()
+#
+#
+# replace_all_pronunciations()
+
+# data = get_all_words()
+# for word in data:
+#     print(word.PRONUNCIATION)
