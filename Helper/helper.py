@@ -1,8 +1,8 @@
 import os
 
 from flask import *
-from Helper.database import *
-# from Helper.database import db, words
+from Helper.database import database as database
+from Helper.database import db, words
 # from Helper.database import words
 from Helper.app import app
 
@@ -10,9 +10,8 @@ from Helper.app import app
 # db = database.db
 # Functions to sort through lists returned by database.
 
-
 def get_syllables_match_list(word: words) -> list:
-    results = syllable_matches(word)
+    results = database.syllable_matches(word)
     return results
 
 
@@ -35,7 +34,7 @@ def get_exact_matches(word_object: words, syllable_count_matches: list, rhyme_di
 def get_close_matches_rhyme(word_object: words, syllable_count_matches: list) -> dict:
     # word_details = db.get_word_details(word)
     # syllable_count_matches = details_list_to_word_list(db.syllable_matches(word_details))
-    rhyme_matches = get_rhyme_dict(word_object)
+    rhyme_matches = database.get_rhyme_dict(word_object)
     close_matches_rhymes = {}
     for num in range(word_object.SYLLABLES): # number of syllables
         syllable_match_list = details_list_to_word_list(syllable_count_matches)
@@ -48,7 +47,7 @@ def get_close_matches_scansion(word_object: words, syllable_count_matches) -> di
     syllable_count_matches = details_list_to_word_list(syllable_count_matches)
     # word_details = db.get_word_details(word)
     # syllable_count_matches = details_list_to_word_list(db.syllable_matches(word_details))
-    scansion_matches = get_scansion_matches(word_object)
+    scansion_matches = database.get_scansion_matches(word_object)
     keys = list(scansion_matches.keys())
     # print(keys)
     close_matches_scansion = {}
@@ -89,7 +88,7 @@ def convert_dict_to_camel_case(input_dict: dict) -> dict:
 # can 'GET' be passed in to all these functions?! May need to restructure.
 @app.route('/results/<word>', methods=['GET'])
 def all_together_now(word):
-    word_object = get_word_details(word)
+    word_object = database.get_word_details(word, word)
     syllables = word_object.SYLLABLES
     syllable_count_list = get_syllables_match_list(word_object)
     rhyme_dict = get_close_matches_rhyme(word_object, syllable_count_list)
@@ -104,11 +103,11 @@ def all_together_now(word):
     exact_dict = convert_dict_to_camel_case(exact_dict)
     word = convert_words_to_camel_case(word_object.WORD)
 
-    rhyme_keys = list(rhyme_dict.keys())
-    for key in rhyme_keys:
-        print(key)
-        for word in rhyme_dict[key]:
-            print(word)
+    # rhyme_keys = list(exact_dict.keys())
+    # for key in rhyme_keys:
+    #     print(key)
+    #     for word in rhyme_dict[key]:
+    #         print(word)
     return render_template("results.html", word=word, syllables=syllables,
                            exact_dict=exact_dict, scansion_set=scansion_set,
                            rhyme_dict=rhyme_dict)
@@ -202,5 +201,3 @@ def create_content(exact_dict, rhyme_dict, scansion_set):
 # $ source venv/bin/activate
 # $ pip install -r requirements.txt
 # $ ./run.sh
-
-all_together_now('apology')
