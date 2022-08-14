@@ -225,11 +225,16 @@ def get_exact_matches(word_object: words, syllable_count_matches: list, rhyme_di
     scansion_set = convert_dict_to_set(scansion_dict)
     syllable_count_matches = [word.WORD for word in syllable_count_matches]
     exact_matches = {}
-    for syl in range(word_object.SYLLABLES):
-        exact_matches[syl+1] = [word for word in syllable_count_matches if word in scansion_set and word in rhyme_dict[syl+1]]
-        if len(exact_matches[syl+1]) == 0:
-            exact_matches.pop(syl+1)
+    if word_object.SYLLABLES == len(list(rhyme_dict.keys())):
+        for syl in range(word_object.SYLLABLES):
+            exact_matches[syl+1] = [word for word in syllable_count_matches if word in scansion_set and word in rhyme_dict[syl+1]]
+    else:
+        for syl in range(len(list(rhyme_dict.keys()))):
+            exact_matches[syl+1] = [word for word in syllable_count_matches if word in scansion_set and word in rhyme_dict[syl+1]]
+        # if len(exact_matches[syl+1]) == 0:
+        #     exact_matches.pop(syl+1)
     return exact_matches
+
 
 
 def get_close_matches_rhyme(word_object: words, syllable_count_matches: list) -> dict:
@@ -237,10 +242,13 @@ def get_close_matches_rhyme(word_object: words, syllable_count_matches: list) ->
     # syllable_count_matches = details_list_to_word_list(db.syllable_matches(word_details))
     rhyme_matches = get_rhyme_dict(word_object)
     close_matches_rhymes = {}
-    for num in range(word_object.SYLLABLES): # number of syllables
+    # for num in range(word_object.SYLLABLES): # number of syllables
+    for num in range(len(list(rhyme_matches.keys()))): # number of keys, to avoid out of range when matches weren't found.
         syllable_match_list = details_list_to_word_list(syllable_count_matches)
         rhyme_list = details_list_to_word_list(rhyme_matches[num + 1])
         close_matches_rhymes[num+1] = [word for word in syllable_match_list if word in rhyme_list]
+        if len(close_matches_rhymes[num+1]) == 0:
+            close_matches_rhymes.pop(num+1)
     return close_matches_rhymes
 
 
@@ -303,7 +311,6 @@ def all_together_now(word):
     scansion_set = convert_list_to_camel_case(scansion_set)
     exact_dict = convert_dict_to_camel_case(exact_dict)
     word = convert_words_to_camel_case(word_object.WORD)
-
     # rhyme_keys = list(exact_dict.keys())
     # for key in rhyme_keys:
     #     print(key)

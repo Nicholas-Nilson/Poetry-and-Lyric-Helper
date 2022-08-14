@@ -15,7 +15,7 @@
 <div class="exact matches">
     {% for key, value in exact_dict.items() %}
     <div class ="exactmatch">
-    <h2>Exact Matches: {{key}} syllable(s) rhyme & matching stresses </h2>
+    <h2>Exact Matches: {{key}} syllable(s) rhyme & matching stresses: </h2>
     {% for word in value %}
     {{ word }}
     {% endfor %}
@@ -26,7 +26,7 @@
 <div class="rhyme matches">
     {% for key, value in rhyme_dict.items() %}
     <div class ="rhyme_match">
-    <h2>Rhyme Matches: {{key}} syllable(s) rhyme, stresses ignored. </h2>
+    <h2>Rhyme Matches: {{key}} syllable(s) rhyme, stresses ignored: </h2>
     {% for word in value %}
     {{ word }}
     {% endfor %}
