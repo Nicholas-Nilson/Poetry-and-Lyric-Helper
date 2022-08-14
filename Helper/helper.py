@@ -1,15 +1,14 @@
+import os
+
 from flask import *
-import Helper.database as database
-from Helper.database import words
+from Helper.database import database as database
+from Helper.database import db, words
+# from Helper.database import words
 from Helper.app import app
 
+# this might break it again..
+# db = database.db
 # Functions to sort through lists returned by database.
-
-
-# def get_syllables_match_list(word) -> list:
-#     db = database
-#     word_details = db.get_word_details(word)
-#     return db.syllable_matches(word_details)
 
 def get_syllables_match_list(word: words) -> list:
     results = database.syllable_matches(word)
@@ -33,10 +32,9 @@ def get_exact_matches(word_object: words, syllable_count_matches: list, rhyme_di
 
 
 def get_close_matches_rhyme(word_object: words, syllable_count_matches: list) -> dict:
-    db = database
     # word_details = db.get_word_details(word)
     # syllable_count_matches = details_list_to_word_list(db.syllable_matches(word_details))
-    rhyme_matches = db.get_rhyme_dict(word_object)
+    rhyme_matches = database.get_rhyme_dict(word_object)
     close_matches_rhymes = {}
     for num in range(word_object.SYLLABLES): # number of syllables
         syllable_match_list = details_list_to_word_list(syllable_count_matches)
@@ -47,10 +45,9 @@ def get_close_matches_rhyme(word_object: words, syllable_count_matches: list) ->
 
 def get_close_matches_scansion(word_object: words, syllable_count_matches) -> dict:
     syllable_count_matches = details_list_to_word_list(syllable_count_matches)
-    db = database
     # word_details = db.get_word_details(word)
     # syllable_count_matches = details_list_to_word_list(db.syllable_matches(word_details))
-    scansion_matches = db.get_scansion_matches(word_object)
+    scansion_matches = database.get_scansion_matches(word_object)
     keys = list(scansion_matches.keys())
     # print(keys)
     close_matches_scansion = {}
@@ -89,7 +86,7 @@ def convert_dict_to_camel_case(input_dict: dict) -> dict:
 # scansion, rhyme, and exacts to camel case, and return those!
 
 # can 'GET' be passed in to all these functions?! May need to restructure.
-@app.route('/results/<word>')
+@app.route('/results/<word>', methods=['GET'])
 def all_together_now(word):
     word_object = database.get_word_details(word)
     syllables = word_object.SYLLABLES
@@ -120,6 +117,11 @@ def all_together_now(word):
 @app.route('/')
 def index():
     return render_template("layout.html")
+
+
+# if __name__ == '__main__':
+#     port = int(os.environ["PORT"])
+#     app.run(host='0.0.0.0', port=port, debug=True)
 
 
 # have to create params like: exact_1, exact_2, exact_3

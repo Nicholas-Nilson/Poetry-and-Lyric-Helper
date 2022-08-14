@@ -1,9 +1,9 @@
 # NEEDS: app name, SQL db location, site name, site description
-from flask import Flask, render_template, request, url_for, redirect
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 import os
 # from Helper.database import db
-from os.path import join, dirname, realpath
+# from os.path import join, dirname, realpath
 
 
 basedir = os.path.abspath(os.path.dirname(__file__))
