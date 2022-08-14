@@ -169,7 +169,8 @@ class database:
                         results_dict[i].remove(word)
                     else:
                         value_list.append(word)
-                results_dict[i+1] = value_list
+                if len(value_list) != 0:
+                    results_dict[i+1] = value_list
                 num_indexes_to_remove = len(temp.split())
                 pronunciation_list = pronunciation_list[:-num_indexes_to_remove]
                 # print(results_dict)

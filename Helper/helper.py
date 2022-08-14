@@ -1,7 +1,9 @@
 import os
-
+import pkg_resources
 from flask import *
 from flask_sqlalchemy import SQLAlchemy
+import jinja2
+pkg_resources.require("SQLAlchemy==1.3.23")
 
 # from Helper.database import database as database
 # from Helper.database import db, words
@@ -12,10 +14,8 @@ from Helper.app import app
 # db = database.db
 # Functions to sort through lists returned by database.
 
-
-
-
 db = SQLAlchemy(app)
+env = jinja2.Environment()
 
 
 class words(db.Model):
@@ -177,6 +177,9 @@ def get_rhyme_dict(word_object: words) -> dict:
                 else:
                     value_list.append(word)
             results_dict[i+1] = value_list
+            if len(results_dict[i+1]) == 0:
+                results_dict.pop(i+1)
+                break
             num_indexes_to_remove = len(temp.split())
             pronunciation_list = pronunciation_list[:-num_indexes_to_remove]
             # print(results_dict)
@@ -206,7 +209,6 @@ def get_scansion_matches(word_object: words) -> dict:
     return results_dict
 
 
-
 def get_syllables_match_list(word: words) -> list:
     results = syllable_matches(word)
     return results
@@ -225,6 +227,8 @@ def get_exact_matches(word_object: words, syllable_count_matches: list, rhyme_di
     exact_matches = {}
     for syl in range(word_object.SYLLABLES):
         exact_matches[syl+1] = [word for word in syllable_count_matches if word in scansion_set and word in rhyme_dict[syl+1]]
+        if len(exact_matches[syl+1]) == 0:
+            exact_matches.pop(syl+1)
     return exact_matches
 
 
@@ -300,11 +304,11 @@ def all_together_now(word):
     exact_dict = convert_dict_to_camel_case(exact_dict)
     word = convert_words_to_camel_case(word_object.WORD)
 
-    rhyme_keys = list(exact_dict.keys())
-    for key in rhyme_keys:
-        print(key)
-        for word in rhyme_dict[key]:
-            print(word)
+    # rhyme_keys = list(exact_dict.keys())
+    # for key in rhyme_keys:
+    #     print(key)
+    #     for word in rhyme_dict[key]:
+    #         print(word)
     return render_template("results.html", word=word, syllables=syllables,
                            exact_dict=exact_dict, scansion_set=scansion_set,
                            rhyme_dict=rhyme_dict)
@@ -313,7 +317,7 @@ def all_together_now(word):
 
 @app.route('/')
 def index():
-    return render_template("layout.html")
+    return render_template("homepage.html")
 
 
 # if __name__ == '__main__':
@@ -384,7 +388,7 @@ db.create_all()
 # # print(scansion_dict['demoted'])
 # print(camel_list)
 
-all_together_now('apology')
+# all_together_now('apology')
 
 # params = create_params_from_dict(rhyme_dict, 'rhyme')
 # param_keys = list(params.keys())
