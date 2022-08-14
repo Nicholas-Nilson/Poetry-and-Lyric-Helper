@@ -1,8 +1,11 @@
 {% extends 'layout.html' %}
 {% block body %}
+
 <div>
     <h1> {{ word }}</h1>
 </div>
+
+{% if word_not_found==1 %}
 
 <!-- Insert a line across the page here! -->
 <!-- Exact matches:
@@ -11,7 +14,7 @@
         - Display: EXACT: how many syllables are matched (key)
         - then rows & columns of exact matches
         - Iterate through keys and display the same thing. -->
-
+{% else %}
 <div class="exact matches">
     {% for key, value in exact_dict.items() %}
     <div class ="exactmatch">
@@ -40,6 +43,5 @@
     {{ word }}
     {% endfor %}
 </div>
-
-
+{% endif %}
 {% endblock %}

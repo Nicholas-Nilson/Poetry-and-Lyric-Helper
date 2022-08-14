@@ -298,6 +298,9 @@ def convert_dict_to_camel_case(input_dict: dict) -> dict:
 @app.route('/results/<word>', methods=['GET'])
 def all_together_now(word):
     word_object = get_word_details(word)
+    if not word_object:
+        word_not_found = 1
+        return render_template("results.html", word_not_found=word_not_found, word="No matches found")
     syllables = word_object.SYLLABLES
     syllable_count_list = get_syllables_match_list(word_object)
     rhyme_dict = get_close_matches_rhyme(word_object, syllable_count_list)
@@ -409,3 +412,4 @@ db.create_all()
 # $ source venv/bin/activate
 # $ pip install -r requirements.txt
 # $ ./run.sh
+
