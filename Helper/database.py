@@ -10,7 +10,6 @@ import re
 
 db = SQLAlchemy(app)
 
-
 class words(db.Model):
     index = db.Column(db.Integer, primary_key=True)
     WORD = db.Column(db.Text)

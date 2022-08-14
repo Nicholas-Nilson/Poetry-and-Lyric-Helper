@@ -1,9 +1,7 @@
 from flask import *
-
 import Helper.database as database
 from Helper.database import words
 from Helper.app import app
-
 
 # Functions to sort through lists returned by database.
 
