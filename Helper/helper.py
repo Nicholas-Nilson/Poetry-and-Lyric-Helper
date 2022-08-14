@@ -88,7 +88,7 @@ def convert_dict_to_camel_case(input_dict: dict) -> dict:
 # can 'GET' be passed in to all these functions?! May need to restructure.
 @app.route('/results/<word>', methods=['GET'])
 def all_together_now(word):
-    word_object = database.get_word_details(word, word)
+    word_object = database.get_word_details(word)
     syllables = word_object.SYLLABLES
     syllable_count_list = get_syllables_match_list(word_object)
     rhyme_dict = get_close_matches_rhyme(word_object, syllable_count_list)
