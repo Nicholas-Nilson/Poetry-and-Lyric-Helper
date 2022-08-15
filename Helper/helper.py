@@ -225,12 +225,14 @@ def get_exact_matches(word_object: words, syllable_count_matches: list, rhyme_di
     scansion_set = convert_dict_to_set(scansion_dict)
     syllable_count_matches = [word.WORD for word in syllable_count_matches]
     exact_matches = {}
+    print(list(rhyme_dict.keys()))
     if word_object.SYLLABLES == len(list(rhyme_dict.keys())):
         for syl in range(word_object.SYLLABLES):
             exact_matches[syl+1] = [word for word in syllable_count_matches if word in scansion_set and word in rhyme_dict[syl+1]]
     else:
-        for syl in range(len(list(rhyme_dict.keys()))):
-            exact_matches[syl+1] = [word for word in syllable_count_matches if word in scansion_set and word in rhyme_dict[syl+1]]
+        for key in list(rhyme_dict.keys()):
+            print(len(list(rhyme_dict.keys())))
+            exact_matches[key] = [word for word in syllable_count_matches if word in scansion_set and word in rhyme_dict[key]]
         # if len(exact_matches[syl+1]) == 0:
         #     exact_matches.pop(syl+1)
     return exact_matches
@@ -295,8 +297,10 @@ def convert_dict_to_camel_case(input_dict: dict) -> dict:
 # scansion, rhyme, and exacts to camel case, and return those!
 
 # can 'GET' be passed in to all these functions?! May need to restructure.
-@app.route('/results/<word>', methods=['GET'])
+@app.route('/results/<word>')
 def all_together_now(word):
+    # word = request.args.get['word', 'asdf']
+    word = word
     word_object = get_word_details(word)
     if not word_object:
         word_not_found = 1

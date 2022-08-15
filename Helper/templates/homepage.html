@@ -1,7 +1,15 @@
-<form action="/action_comment?post={{ post.id }}" method="POST">
+{% extends 'layout.html' %}
+{% block body %}
+
+<form action='/results/<word>'>
+    <input type="search", id="word">
+<button>Search</button>
 
     </form>
 
 <div>
 <h1>TESTING!!!!</h1>
 </div>
+
+
+{% endblock %}
