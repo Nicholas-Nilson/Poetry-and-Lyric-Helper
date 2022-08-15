@@ -20,7 +20,7 @@
     <div class ="exactmatch">
     <h2>Exact Matches: {{key}} syllable(s) rhyme & matching stresses: </h2>
     {% for word in value %}
-    {{ word }}
+    <a href="/{{ word }}">{{ word }}</a>
     {% endfor %}
         </div>
     {% endfor %}
@@ -31,7 +31,7 @@
     <div class ="rhyme_match">
     <h2>Rhyme Matches: {{key}} syllable(s) rhyme, stresses ignored: </h2>
     {% for word in value %}
-    {{ word }}
+    <a href="/{{ word }}">{{ word }}</a>
     {% endfor %}
         </div>
     {% endfor %}
@@ -40,7 +40,7 @@
 <div class="scansion matches">
     <h2>Stress & syllable count matches:</h2>
     {% for word in scansion_set %}
-    {{ word }}
+    <a href="/{{ word }}">{{ word }}</a>
     {% endfor %}
 </div>
 {% endif %}

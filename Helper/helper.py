@@ -292,12 +292,8 @@ def convert_dict_to_camel_case(input_dict: dict) -> dict:
 # get word_object, get syllable list, get scansion_dict, get rhyme_dict,
 # get exact_dict, convert scansion_dict to scansion_set, convert
 # scansion, rhyme, and exacts to camel case, and return those!
-
-# can 'GET' be passed in to all these functions?! May need to restructure.
-@app.route('/results', methods=['POST'])
-def all_together_now():
-    word = request.form['word']
-    # word = word
+def all_together_now(word):
+    word = word
     word_object = get_word_details(word)
     if not word_object:
         word_not_found = 1
@@ -320,10 +316,40 @@ def all_together_now():
     #     print(key)
     #     for word in rhyme_dict[key]:
     #         print(word)
+    return [word, syllables, exact_dict, scansion_set, rhyme_dict]
+# above needs syllable count passed in!!!! so we know how long the params will be.
+
+# can 'GET' be passed in to all these functions?! May need to restructure.
+@app.route('/results', methods=['POST'])
+def search():
+    word = request.form['word']
+    contents = all_together_now(word)
+    word = contents[0]
+    syllables = contents[1]
+    exact_dict = contents[2]
+    scansion_set = contents[3]
+    rhyme_dict = contents[4]
     return render_template("results.html", word=word, syllables=syllables,
                            exact_dict=exact_dict, scansion_set=scansion_set,
                            rhyme_dict=rhyme_dict)
 # above needs syllable count passed in!!!! so we know how long the params will be.
+
+# @app.route('results/<word>')
+
+
+@app.route('/<word>')
+def word_click(word):
+    word = word
+    contents = all_together_now(word)
+    word = contents[0]
+    syllables = contents[1]
+    exact_dict = contents[2]
+    scansion_set = contents[3]
+    rhyme_dict = contents[4]
+    keys = list(exact_dict.keys())
+    return render_template("results.html", word=word, syllables=syllables,
+                           exact_dict=exact_dict, scansion_set=scansion_set,
+                           rhyme_dict=rhyme_dict)
 
 
 @app.route('/')
