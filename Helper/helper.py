@@ -225,18 +225,15 @@ def get_exact_matches(word_object: words, syllable_count_matches: list, rhyme_di
     scansion_set = convert_dict_to_set(scansion_dict)
     syllable_count_matches = [word.WORD for word in syllable_count_matches]
     exact_matches = {}
-    print(list(rhyme_dict.keys()))
     if word_object.SYLLABLES == len(list(rhyme_dict.keys())):
         for syl in range(word_object.SYLLABLES):
             exact_matches[syl+1] = [word for word in syllable_count_matches if word in scansion_set and word in rhyme_dict[syl+1]]
     else:
         for key in list(rhyme_dict.keys()):
-            print(len(list(rhyme_dict.keys())))
             exact_matches[key] = [word for word in syllable_count_matches if word in scansion_set and word in rhyme_dict[key]]
         # if len(exact_matches[syl+1]) == 0:
         #     exact_matches.pop(syl+1)
     return exact_matches
-
 
 
 def get_close_matches_rhyme(word_object: words, syllable_count_matches: list) -> dict:
