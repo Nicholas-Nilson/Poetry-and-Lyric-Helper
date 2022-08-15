@@ -294,10 +294,10 @@ def convert_dict_to_camel_case(input_dict: dict) -> dict:
 # scansion, rhyme, and exacts to camel case, and return those!
 
 # can 'GET' be passed in to all these functions?! May need to restructure.
-@app.route('/results/<word>')
-def all_together_now(word):
-    # word = request.args.get['word', 'asdf']
-    word = word
+@app.route('/results', methods=['POST'])
+def all_together_now():
+    word = request.form['word']
+    # word = word
     word_object = get_word_details(word)
     if not word_object:
         word_not_found = 1

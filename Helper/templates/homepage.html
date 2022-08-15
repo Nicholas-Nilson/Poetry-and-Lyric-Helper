@@ -1,8 +1,8 @@
 {% extends 'layout.html' %}
 {% block body %}
 
-<form action='/results/<word>', Method="POST">
-    <input type="search", id="word">
+<form action='/results', method="POST">
+    <input type="search", id="word", name="word">
 <button>Search</button>
 
     </form>
