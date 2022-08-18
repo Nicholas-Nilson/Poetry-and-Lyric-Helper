@@ -288,6 +288,17 @@ def convert_dict_to_camel_case(input_dict: dict) -> dict:
     return output_dict
 
 
+
+# the result of forgetting I'd already done the conversion from 0s 1s and 2s -_-
+# def convert_stresses(stresses: str) -> str:
+#     output = ''
+#     for syllable in stresses:
+#         output += 'u' if syllable == '0' else "S"
+#     return output
+
+
+
+
 # the one function to interact with the website:
 # get word_object, get syllable list, get scansion_dict, get rhyme_dict,
 # get exact_dict, convert scansion_dict to scansion_set, convert
@@ -311,13 +322,17 @@ def all_together_now(word):
     scansion_set = convert_list_to_camel_case(scansion_set)
     exact_dict = convert_dict_to_camel_case(exact_dict)
     word = convert_words_to_camel_case(word_object.WORD)
+    stresses = word_object.SCANSION
+    # print(type(word_object.SCANSION))
+    # print(stresses + "all_together")
     # rhyme_keys = list(exact_dict.keys())
     # for key in rhyme_keys:
     #     print(key)
     #     for word in rhyme_dict[key]:
     #         print(word)
-    return [word, syllables, exact_dict, scansion_set, rhyme_dict]
+    return [word, syllables, exact_dict, scansion_set, rhyme_dict, stresses]
 # above needs syllable count passed in!!!! so we know how long the params will be.
+
 
 # can 'GET' be passed in to all these functions?! May need to restructure.
 @app.route('/results', methods=['POST'])
@@ -329,9 +344,10 @@ def search():
     exact_dict = contents[2]
     scansion_set = contents[3]
     rhyme_dict = contents[4]
+    stresses = contents[5]
     return render_template("results.html", word=word, syllables=syllables,
                            exact_dict=exact_dict, scansion_set=scansion_set,
-                           rhyme_dict=rhyme_dict)
+                           rhyme_dict=rhyme_dict, stresses=stresses)
 # above needs syllable count passed in!!!! so we know how long the params will be.
 
 # @app.route('results/<word>')
@@ -346,10 +362,10 @@ def word_click(word):
     exact_dict = contents[2]
     scansion_set = contents[3]
     rhyme_dict = contents[4]
-    keys = list(exact_dict.keys())
+    stresses = contents[5]
     return render_template("results.html", word=word, syllables=syllables,
                            exact_dict=exact_dict, scansion_set=scansion_set,
-                           rhyme_dict=rhyme_dict)
+                           rhyme_dict=rhyme_dict, stresses=stresses)
 
 
 @app.route('/')
