@@ -1,6 +1,6 @@
 # NEEDS: app name, SQL db location, site name, site description
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
+# from flask_sqlalchemy import SQLAlchemy
 import os
 # from Helper.database import db
 # from os.path import join, dirname, realpath
