@@ -6,7 +6,7 @@ import pkg_resources
 from Helper.app import app
 from flask_sqlalchemy import SQLAlchemy
 # from sqlalchemy import create_engine, Table
-import re
+# import re
 pkg_resources.require("SQLAlchemy==1.3.23")
 
 

@@ -182,26 +182,29 @@ def index():
 
 # have to create params like: exact_1, exact_2, exact_3
 # this... might actually be superfluous. time will tell.
-def create_params_from_dict(input_dict, param_name):
-    keys = list(input_dict.keys())
-    params = {}
-    for key in keys:
-        params[f'{param_name}_{key}'] = input_dict[key]
-    return params
-
-
-def create_param_from_list(input_list, param_name):
-    params = {f'{param_name}': input_list}
-    return params
-
-
-def create_content(exact_dict, rhyme_dict, scansion_set):
-    content = {}
-    params = ['exact', 'rhyme', 'scansion']
-    for param in params:
-        pass
+# def create_params_from_dict(input_dict, param_name):
+#     keys = list(input_dict.keys())
+#     params = {}
+#     for key in keys:
+#         params[f'{param_name}_{key}'] = input_dict[key]
+#     return params
+#
+#
+# def create_param_from_list(input_list, param_name):
+#     params = {f'{param_name}': input_list}
+#     return params
+#
+#
+# def create_content(exact_dict, rhyme_dict, scansion_set):
+#     content = {}
+#     params = ['exact', 'rhyme', 'scansion']
+#     for param in params:
+#         pass
 
 db.create_all()
+
+
+
 # word_details_1 = (71786, 'LOVE', 'L AH1 V', 1, "'")
 # rhyme_dict = get_close_matches_rhyme('agitated')
 # scansion = get_close_matches_scansion('agitated')
@@ -257,3 +260,4 @@ db.create_all()
 # $ pip install -r requirements.txt
 # $ ./run.sh
 
+# print(all_together_now("pernicious"))
