@@ -142,6 +142,7 @@ def all_together_now(word):
 @app.route('/results', methods=['POST'])
 def search():
     word = request.form['word']
+    print(word)
     contents = all_together_now(word)
     word = contents[0]
     syllables = contents[1]
@@ -257,3 +258,4 @@ db.create_all()
 # $ pip install -r requirements.txt
 # $ ./run.sh
 
+# print(type(all_together_now('hello')))
