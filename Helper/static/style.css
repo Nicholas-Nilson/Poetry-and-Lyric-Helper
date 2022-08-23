@@ -12,7 +12,7 @@
 	padding-left: 3%;
 	padding-right: 3%;
 
-	background-color: #8EA076;
+    background-color: #B0E0E6;
 
 }
 .header{
@@ -26,7 +26,6 @@
 }
 .content{
 	margin-top: 0%;
-	background-color: #8EA076;
 }
 
 
@@ -61,8 +60,6 @@
 
 .footer-basic {
   padding:40px 0;
-  background-color:#8EA076;
-  color:#8EA076;
 }
 
 .footer-basic ul {
