@@ -1,13 +1,13 @@
-
-<a href="/" id="nolinks"></a>
-<nav class="navbar navbar-light azure">
-  <a class="navbar-brand" href="/">
-  </a>
+<nav class="header">
 	<h1 class="display-4">{{ config.SITE_NAME }}</h1>
-	{% if config.SITE_DESCRIPTION %} - {% endif %} <i>{{ config.SITE_DESCRIPTION }}</i>
-</nav>
-<form action='/results', method="POST">
+	{% if config.SITE_DESCRIPTION %} - {% endif %}
+    <i>{{ config.SITE_DESCRIPTION }}</i>
+    <form action='/results', method="POST">
     <input type="search", id="word", name="word">
-<button>Search</button>
+        <button>Search</button></form>
+</nav>
+<!--<form action='/results', method="POST">-->
+<!--    <input type="search", id="word", name="word">-->
+<!--<button>Search</button>-->
 
-    </form>
+<!--    </form>-->
