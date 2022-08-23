@@ -29,8 +29,8 @@
 
 <div class="rhyme matches">
     {% for key, value in rhyme_dict.items() %}
-    <div class ="rhyme_match">
-    <h2>Rhyme Matches: {{key}} syllable(s) rhyme, stresses ignored: </h2>
+    <button type="button" class="collapsible">Rhyme Matches: {{key}} syllable(s) rhyme, stresses ignored</button>
+    <div class ="collapse">
     {% for word in value %}
     <a href="/{{ word }}">{{ word }}</a>
     {% endfor %}
@@ -39,7 +39,9 @@
 </div>
 
 <div class="scansion matches">
-    <h2>Stress & syllable count matches:</h2>
+    <button type="button" class="collapsible">Stress & syllable count matches</button>
+    <div class ="collapse">
+<!--    <h2>Stress & syllable count matches:</h2>-->
     {% for word in scansion_set %}
     <a href="/{{ word }}">{{ word }}</a>
     {% endfor %}
