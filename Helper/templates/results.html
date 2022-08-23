@@ -18,7 +18,7 @@
 <div class="exact matches">
     {% for key, value in exact_dict.items() %}
     <button type="button" class="collapsible">Exact Matches: {{key}} syllable(s) rhyme & matching stresses</button>
-    <div class ="content">
+    <div class ="collapse">
 <!--    <h2>Exact Matches: {{key}} syllable(s) rhyme & matching stresses: </h2>-->
     {% for word in value %}
     <a href="/{{ word }}">{{ word }}</a>
@@ -46,22 +46,7 @@
 </div>
 {% endif %}
 
-<script>
-var coll = document.getElementsByClassName("collapsible");
-var i;
 
-for (i = 0; i < coll.length; i++) {
-  coll[i].addEventListener("click", function() {
-    this.classList.toggle("active");
-    var content = this.nextElementSibling;
-    if (content.style.display === "block") {
-      content.style.display = "none";
-    } else {
-      content.style.display = "block";
-    }
-  });
-}
-</script>
 {% endblock %}
 
 
