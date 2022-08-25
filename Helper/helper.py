@@ -7,21 +7,19 @@ from Helper.database import*
 import jinja2
 pkg_resources.require("SQLAlchemy==1.3.23")
 
-# from Helper.database import database as database
-# from Helper.database import db, words
-# from Helper.database import words
 
-
-# Functions to sort through lists returned by database.
 env = jinja2.Environment()
 
 
+# Functions to sort through lists returned by database.
 def get_syllables_match_list(word: words) -> list:
+    """"Searches database for words matching syllable count of input word"""
     results = syllable_matches(word)
     return results
 
 
 def details_list_to_word_list(list):
+    """Converts list of word objects to a list of each word's WORD attribute."""
     return [word.WORD for word in list]
 
 
@@ -29,6 +27,8 @@ def details_list_to_word_list(list):
 # be sure a dict can be passed to HTML.
 # for now, scansion matches will be converted to a single list
 def get_exact_matches(word_object: words, syllable_count_matches: list, rhyme_dict: dict, scansion_dict: dict) -> dict:
+    """Compares syllable count matches, rhyme matches, and word stress matches
+    and returns a list of words found in all three."""
     scansion_set = convert_dict_to_set(scansion_dict)
     syllable_count_matches = [word.WORD for word in syllable_count_matches]
     exact_matches = {}
@@ -44,8 +44,8 @@ def get_exact_matches(word_object: words, syllable_count_matches: list, rhyme_di
 
 
 def get_close_matches_rhyme(word_object: words, syllable_count_matches: list) -> dict:
-    # word_details = db.get_word_details(word)
-    # syllable_count_matches = details_list_to_word_list(db.syllable_matches(word_details))
+    """Given a word, searches the database and returns a dict of word objects where
+    rhyme matches are found at various syllable counts."""
     rhyme_matches = get_rhyme_dict(word_object)
     close_matches_rhymes = {}
     # for num in range(word_object.SYLLABLES): # number of syllables
