@@ -43,10 +43,30 @@ def get_exact_matches(word_object: words, syllable_count_matches: list, rhyme_di
     return exact_matches
 
 
+# def get_close_matches_rhyme(word_object: words, syllable_count_matches: list) -> dict:
+#     """Given a word, searches the database and returns a dict of word objects where
+#     rhyme matches are found at various syllable counts."""
+#     rhyme_matches = get_rhyme_dict(word_object)
+#     close_matches_rhymes = {}
+#     # for num in range(word_object.SYLLABLES): # number of syllables
+#     for num in range(len(list(rhyme_matches.keys()))): # number of keys, to avoid out of range when matches weren't found.
+#         syllable_match_list = details_list_to_word_list(syllable_count_matches)
+#         rhyme_list = details_list_to_word_list(rhyme_matches[num + 1])
+#         close_matches_rhymes[num+1] = [word for word in syllable_match_list if word in rhyme_list]
+#         if len(close_matches_rhymes[num+1]) == 0:
+#             close_matches_rhymes.pop(num+1)
+#     return close_matches_rhymes
+
+
+
+
+
+# going to compare performance with working with just the syllable match list
+# vs re-querying the database.
 def get_close_matches_rhyme(word_object: words, syllable_count_matches: list) -> dict:
     """Given a word, searches the database and returns a dict of word objects where
     rhyme matches are found at various syllable counts."""
-    rhyme_matches = get_rhyme_dict(word_object)
+    rhyme_matches = get_rhyme_dict(word_object, syllable_count_matches)
     close_matches_rhymes = {}
     # for num in range(word_object.SYLLABLES): # number of syllables
     for num in range(len(list(rhyme_matches.keys()))): # number of keys, to avoid out of range when matches weren't found.

@@ -6,7 +6,7 @@ import pkg_resources
 from Helper.app import app
 from flask_sqlalchemy import SQLAlchemy
 # from sqlalchemy import create_engine, Table
-import re
+# import re
 pkg_resources.require("SQLAlchemy==1.3.23")
 
 
@@ -135,11 +135,19 @@ def syllable_to_match(pronunciation_list: list) -> str:
     return rhyme
 
 # remember to pop the searched word when presenting the list later.
-def match_syllable(word_object: words, syllable: str) -> list:
-    results = words.query.filter(words.PRONUNCIATION.endswith(syllable), words.WORD != word_object.WORD).all()
+# def match_syllable(word_object: words, syllable: str) -> list:
+#     results = words.query.filter(words.PRONUNCIATION.endswith(syllable), words.WORD != word_object.WORD).all()
+#     return  results
+
+
+def match_syllable(word_object: words, syllable: str, syllable_count_matches: list) -> list:
+    # results = words.query.filter(words.PRONUNCIATION.endswith(syllable), words.WORD != word_object.WORD).all()
+    results = [word for word in syllable_count_matches if
+               word.PRONUNCIATION.endswith(syllable) and word.WORD != word_object.WORD]
     return  results
 
-def get_rhyme_dict(word_object: words) -> dict:
+
+def get_rhyme_dict(word_object: words, syllable_count_matches: list) -> dict:
     """Given a word, return a dictionary with number of syllables rhymed as the key
     and matching words as values"""
     # this function could also match by syllables to avoid cleaning up later, but eventually
@@ -153,7 +161,7 @@ def get_rhyme_dict(word_object: words) -> dict:
         if i == 0:
             temp = syllable_to_match(pronunciation_list)
             rhyme = temp
-            results_dict[i+1] = match_syllable(word_object, rhyme)
+            results_dict[i+1] = match_syllable(word_object, rhyme, syllable_count_matches)
             # now have to delete that last syllable from the pronunciation_list
             num_indexes_to_remove = len(temp.split())
             pronunciation_list = pronunciation_list[:-num_indexes_to_remove]
@@ -163,7 +171,7 @@ def get_rhyme_dict(word_object: words) -> dict:
             temp = syllable_to_match(pronunciation_list)
             rhyme = temp + ' ' + rhyme
             # results_dict[i + 1] = match_syllable(rhyme)
-            value_list = match_syllable(word_object, rhyme)
+            value_list = match_syllable(word_object, rhyme, syllable_count_matches)
             for word in value_list:
                 if word in results_dict[i]:
                     results_dict[i].remove(word)
