@@ -34,16 +34,19 @@ def get_word_details(word: str) -> words:
 
     return result
 
+
 # might not need this, as we can call the word object attributes
 def create_word_details_from_object(word_object: words) -> tuple:
     word_details = (word_object.index, word_object.WORD, word_object.PRONUNCIATION, word_object.SYLLABLES, word_object.SCANSION)
     return word_details
+
 
 def syllable_matches(word_object: words) -> list:
     """Get words from database that match syllable count."""
     results = words.query.filter(words.SYLLABLES == word_object.SYLLABLES, words.WORD != word_object.WORD).all()
     results = sorted(results, key=lambda x: x.WORD)
     return results
+
 
 # syllables_to_list may be superfluous depending on matching multiple rhymes
 # unless it is changed to take in a list.. then it would be reusable
@@ -115,6 +118,8 @@ def syllables_to_list(word_object: words) -> list:
 #             i -= 1
 #     # pronunciation_list.append(rhyme)
 #     return rhyme
+
+
 def syllable_to_match(pronunciation_list: list) -> str:
     """Parses syllables list to find last syllable"""
     # pronunciation_list = syllables_to_list(word_details)

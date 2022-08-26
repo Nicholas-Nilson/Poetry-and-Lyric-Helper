@@ -1,20 +1,21 @@
 {% extends 'layout.html' %}
 {% block body %}
 
+<!--<div>-->
+<!--    <h1> {{ word }}  |  {{ stresses }} </h1>-->
+<!--</div>-->
+
 <div>
-    <h1> {{ word }}  |  {{ stresses }} </h1>
-</div>
-
-{% if word_not_found==1 %}
-
-<!-- Insert a line across the page here! -->
+    <!-- Insert a line across the page here! -->
 <!-- Exact matches:
         - Find numer of keys?
         - Check for empty lists.
         - Display: EXACT: how many syllables are matched (key)
         - then rows & columns of exact matches
         - Iterate through keys and display the same thing. -->
-{% else %}
+<div>
+    <h1> {{ word }}  |  {{ stresses }} </h1>
+</div>
 <div class="exact matches">
     {% for key, value in exact_dict.items() %}
     <button type="button" class="collapsible">Exact Matches: {{key}} syllable(s) rhyme & matching stresses</button>
@@ -46,8 +47,8 @@
     <a href="/{{ word }}">{{ word }}</a>
     {% endfor %}
 </div>
-{% endif %}
-
+</div>
+</div>
 
 {% endblock %}
 
