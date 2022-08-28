@@ -172,10 +172,8 @@ def get_rhyme_dict(word_object: words, syllable_count_matches: list) -> dict:
             pronunciation_list = pronunciation_list[:-num_indexes_to_remove]
             i += 1
         else:
-            # needs a check for if a math is in a prior key, if so... pop it from that earlier key.
             temp = syllable_to_match(pronunciation_list)
             rhyme = temp + ' ' + rhyme
-            # results_dict[i + 1] = match_syllable(rhyme)
             value_list = match_syllable(word_object, rhyme, syllable_count_matches)
             for word in value_list:
                 if word in results_dict[i]:
