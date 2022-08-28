@@ -34,16 +34,19 @@ def get_word_details(word: str) -> words:
 
     return result
 
+
 # might not need this, as we can call the word object attributes
 def create_word_details_from_object(word_object: words) -> tuple:
     word_details = (word_object.index, word_object.WORD, word_object.PRONUNCIATION, word_object.SYLLABLES, word_object.SCANSION)
     return word_details
+
 
 def syllable_matches(word_object: words) -> list:
     """Get words from database that match syllable count."""
     results = words.query.filter(words.SYLLABLES == word_object.SYLLABLES, words.WORD != word_object.WORD).all()
     results = sorted(results, key=lambda x: x.WORD)
     return results
+
 
 # syllables_to_list may be superfluous depending on matching multiple rhymes
 # unless it is changed to take in a list.. then it would be reusable
@@ -115,6 +118,8 @@ def syllables_to_list(word_object: words) -> list:
 #             i -= 1
 #     # pronunciation_list.append(rhyme)
 #     return rhyme
+
+
 def syllable_to_match(pronunciation_list: list) -> str:
     """Parses syllables list to find last syllable"""
     # pronunciation_list = syllables_to_list(word_details)
@@ -135,11 +140,19 @@ def syllable_to_match(pronunciation_list: list) -> str:
     return rhyme
 
 # remember to pop the searched word when presenting the list later.
-def match_syllable(word_object: words, syllable: str) -> list:
-    results = words.query.filter(words.PRONUNCIATION.endswith(syllable), words.WORD != word_object.WORD).all()
+# def match_syllable(word_object: words, syllable: str) -> list:
+#     results = words.query.filter(words.PRONUNCIATION.endswith(syllable), words.WORD != word_object.WORD).all()
+#     return  results
+
+
+def match_syllable(word_object: words, syllable: str, syllable_count_matches: list) -> list:
+    # results = words.query.filter(words.PRONUNCIATION.endswith(syllable), words.WORD != word_object.WORD).all()
+    results = [word for word in syllable_count_matches if
+               word.PRONUNCIATION.endswith(syllable) and word.WORD != word_object.WORD]
     return  results
 
-def get_rhyme_dict(word_object: words) -> dict:
+
+def get_rhyme_dict(word_object: words, syllable_count_matches: list) -> dict:
     """Given a word, return a dictionary with number of syllables rhymed as the key
     and matching words as values"""
     # this function could also match by syllables to avoid cleaning up later, but eventually
@@ -153,17 +166,15 @@ def get_rhyme_dict(word_object: words) -> dict:
         if i == 0:
             temp = syllable_to_match(pronunciation_list)
             rhyme = temp
-            results_dict[i+1] = match_syllable(word_object, rhyme)
+            results_dict[i+1] = match_syllable(word_object, rhyme, syllable_count_matches)
             # now have to delete that last syllable from the pronunciation_list
             num_indexes_to_remove = len(temp.split())
             pronunciation_list = pronunciation_list[:-num_indexes_to_remove]
             i += 1
         else:
-            # needs a check for if a math is in a prior key, if so... pop it from that earlier key.
             temp = syllable_to_match(pronunciation_list)
             rhyme = temp + ' ' + rhyme
-            # results_dict[i + 1] = match_syllable(rhyme)
-            value_list = match_syllable(word_object, rhyme)
+            value_list = match_syllable(word_object, rhyme, syllable_count_matches)
             for word in value_list:
                 if word in results_dict[i]:
                     results_dict[i].remove(word)

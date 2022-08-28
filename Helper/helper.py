@@ -1,27 +1,22 @@
 import os
-# import pkg_resources
 from flask import *
-# from flask_sqlalchemy import SQLAlchemy
 from Helper.database import*
-# from Helper.app import app
 import jinja2
 pkg_resources.require("SQLAlchemy==1.3.23")
 
-# from Helper.database import database as database
-# from Helper.database import db, words
-# from Helper.database import words
 
-
-# Functions to sort through lists returned by database.
 env = jinja2.Environment()
 
 
+# Functions to sort through lists returned by database.
 def get_syllables_match_list(word: words) -> list:
+    """"Searches database for words matching syllable count of input word"""
     results = syllable_matches(word)
     return results
 
 
 def details_list_to_word_list(list):
+    """Converts list of word objects to a list of each word's WORD attribute."""
     return [word.WORD for word in list]
 
 
@@ -29,6 +24,8 @@ def details_list_to_word_list(list):
 # be sure a dict can be passed to HTML.
 # for now, scansion matches will be converted to a single list
 def get_exact_matches(word_object: words, syllable_count_matches: list, rhyme_dict: dict, scansion_dict: dict) -> dict:
+    """Compares syllable count matches, rhyme matches, and word stress matches
+    and returns a list of words found in all three."""
     scansion_set = convert_dict_to_set(scansion_dict)
     syllable_count_matches = [word.WORD for word in syllable_count_matches]
     exact_matches = {}
@@ -43,10 +40,27 @@ def get_exact_matches(word_object: words, syllable_count_matches: list, rhyme_di
     return exact_matches
 
 
+# def get_close_matches_rhyme(word_object: words, syllable_count_matches: list) -> dict:
+#     """Given a word, searches the database and returns a dict of word objects where
+#     rhyme matches are found at various syllable counts."""
+#     rhyme_matches = get_rhyme_dict(word_object)
+#     close_matches_rhymes = {}
+#     # for num in range(word_object.SYLLABLES): # number of syllables
+#     for num in range(len(list(rhyme_matches.keys()))): # number of keys, to avoid out of range when matches weren't found.
+#         syllable_match_list = details_list_to_word_list(syllable_count_matches)
+#         rhyme_list = details_list_to_word_list(rhyme_matches[num + 1])
+#         close_matches_rhymes[num+1] = [word for word in syllable_match_list if word in rhyme_list]
+#         if len(close_matches_rhymes[num+1]) == 0:
+#             close_matches_rhymes.pop(num+1)
+#     return close_matches_rhymes
+
+
+# going to compare performance with working with just the syllable match list
+# vs re-querying the database.
 def get_close_matches_rhyme(word_object: words, syllable_count_matches: list) -> dict:
-    # word_details = db.get_word_details(word)
-    # syllable_count_matches = details_list_to_word_list(db.syllable_matches(word_details))
-    rhyme_matches = get_rhyme_dict(word_object)
+    """Given a word, searches the database and returns a dict of word objects where
+    rhyme matches are found at various syllable counts."""
+    rhyme_matches = get_rhyme_dict(word_object, syllable_count_matches)
     close_matches_rhymes = {}
     # for num in range(word_object.SYLLABLES): # number of syllables
     for num in range(len(list(rhyme_matches.keys()))): # number of keys, to avoid out of range when matches weren't found.
@@ -59,18 +73,25 @@ def get_close_matches_rhyme(word_object: words, syllable_count_matches: list) ->
 
 
 def get_close_matches_scansion(word_object: words, syllable_count_matches) -> dict:
-    syllable_count_matches = details_list_to_word_list(syllable_count_matches)
+    # syllable_count_matches = details_list_to_word_list(syllable_count_matches)
     # word_details = db.get_word_details(word)
     # syllable_count_matches = details_list_to_word_list(db.syllable_matches(word_details))
-    scansion_matches = get_scansion_matches(word_object)
-    keys = list(scansion_matches.keys())
-    # print(keys)
-    close_matches_scansion = {}
-    # check length of keys or if searched word has a secondary stress
-    for i in range(len(keys)):
-        scansion_list = details_list_to_word_list(scansion_matches[keys[i]])
-        close_matches_scansion[keys[i]] = [word for word in syllable_count_matches if word in scansion_list]
-    return close_matches_scansion
+    # scansion_matches = get_scansion_matches(word_object, syllable_count_matches)
+    # scansion_matches = get_scansion_matches(word_object, syllable_count_matches)
+    # keys = list(scansion_matches.keys())
+    # close_matches_scansion = {}
+    # # check length of keys or if searched word has a secondary stress
+    # for i in range(len(keys)):
+    #     scansion_list = details_list_to_word_list(scansion_matches[keys[i]])
+    #     close_matches_scansion[keys[i]] = [word for word in syllable_count_matches if word in scansion_list]
+    results_dict = {}
+    if 's' in word_object.SCANSION:
+        scansion_promoted = word_object.SCANSION.replace('s', "p")
+        scansion_demoted = word_object.SCANSION.replace('s', 'u')
+        results_dict['promoted'] = [word.WORD for word in syllable_count_matches if word.SCANSION == scansion_promoted]
+        results_dict['demoted'] = [word.WORD for word in syllable_count_matches if word.SCANSION == scansion_demoted]
+    results_dict['exact'] = [word.WORD for word in syllable_count_matches if word.SCANSION == word_object.SCANSION]
+    return results_dict
 
 
 def convert_dict_to_set(input_dict: dict) -> list:
@@ -110,31 +131,34 @@ def convert_dict_to_camel_case(input_dict: dict) -> dict:
 def all_together_now(word):
     word = word
     word_object = get_word_details(word)
-    if not word_object:
-        word_not_found = 1
-        return render_template("results.html", word_not_found=word_not_found, word="No matches found")
-    syllables = word_object.SYLLABLES
-    syllable_count_list = get_syllables_match_list(word_object)
-    rhyme_dict = get_close_matches_rhyme(word_object, syllable_count_list)
-    scansion_dict = get_close_matches_scansion(word_object, syllable_count_list)
-    # objects for comparison are set!
-    exact_dict = get_exact_matches(word_object, syllable_count_list, rhyme_dict, scansion_dict)
-    # now to convert scansion dict to a set
-    # and convert both dicts and the set to camel case
-    rhyme_dict = convert_dict_to_camel_case(rhyme_dict)
-    scansion_set = convert_dict_to_set(scansion_dict)
-    scansion_set = convert_list_to_camel_case(scansion_set)
-    exact_dict = convert_dict_to_camel_case(exact_dict)
-    word = convert_words_to_camel_case(word_object.WORD)
-    stresses = word_object.SCANSION
-    # print(type(word_object.SCANSION))
-    # print(stresses + "all_together")
-    # rhyme_keys = list(exact_dict.keys())
-    # for key in rhyme_keys:
-    #     print(key)
-    #     for word in rhyme_dict[key]:
-    #         print(word)
-    return [word, syllables, exact_dict, scansion_set, rhyme_dict, stresses]
+    # print(type(word_object))
+    if word_object is None:
+        # word_not_found = 1
+        return None
+        # return render_template("results.html", word_not_found=word_not_found, word="No matches found")
+    else:
+        syllables = word_object.SYLLABLES
+        syllable_count_list = get_syllables_match_list(word_object)
+        rhyme_dict = get_close_matches_rhyme(word_object, syllable_count_list)
+        scansion_dict = get_close_matches_scansion(word_object, syllable_count_list)
+        # objects for comparison are set!
+        exact_dict = get_exact_matches(word_object, syllable_count_list, rhyme_dict, scansion_dict)
+        # now to convert scansion dict to a set
+        # and convert both dicts and the set to camel case
+        rhyme_dict = convert_dict_to_camel_case(rhyme_dict)
+        scansion_set = convert_dict_to_set(scansion_dict)
+        scansion_set = convert_list_to_camel_case(scansion_set)
+        exact_dict = convert_dict_to_camel_case(exact_dict)
+        word = convert_words_to_camel_case(word_object.WORD)
+        stresses = word_object.SCANSION
+        # print(type(word_object.SCANSION))
+        # print(stresses + "all_together")
+        # rhyme_keys = list(exact_dict.keys())
+        # for key in rhyme_keys:
+        #     print(key)
+        #     for word in rhyme_dict[key]:
+        #         print(word)
+        return [word, syllables, exact_dict, scansion_set, rhyme_dict, stresses]
 # above needs syllable count passed in!!!! so we know how long the params will be.
 
 
@@ -143,15 +167,20 @@ def all_together_now(word):
 def search():
     word = request.form['word']
     contents = all_together_now(word)
-    word = contents[0]
-    syllables = contents[1]
-    exact_dict = contents[2]
-    scansion_set = contents[3]
-    rhyme_dict = contents[4]
-    stresses = contents[5]
-    return render_template("results.html", word=word, syllables=syllables,
-                           exact_dict=exact_dict, scansion_set=scansion_set,
-                           rhyme_dict=rhyme_dict, stresses=stresses)
+    if contents is None:
+        return render_template("no_result.html")
+    else:
+        word = contents[0]
+        syllables = contents[1]
+        exact_dict = contents[2]
+        scansion_set = contents[3]
+        rhyme_dict = contents[4]
+        stresses = contents[5]
+        word_not_found = False
+        return render_template("results.html", word=word, syllables=syllables,
+                               exact_dict=exact_dict, scansion_set=scansion_set,
+                               rhyme_dict=rhyme_dict, stresses=stresses,
+                               word_not_found=word_not_found)
 # above needs syllable count passed in!!!! so we know how long the params will be.
 
 
@@ -182,29 +211,26 @@ def index():
 
 # have to create params like: exact_1, exact_2, exact_3
 # this... might actually be superfluous. time will tell.
-# def create_params_from_dict(input_dict, param_name):
-#     keys = list(input_dict.keys())
-#     params = {}
-#     for key in keys:
-#         params[f'{param_name}_{key}'] = input_dict[key]
-#     return params
-#
-#
-# def create_param_from_list(input_list, param_name):
-#     params = {f'{param_name}': input_list}
-#     return params
-#
-#
-# def create_content(exact_dict, rhyme_dict, scansion_set):
-#     content = {}
-#     params = ['exact', 'rhyme', 'scansion']
-#     for param in params:
-#         pass
+def create_params_from_dict(input_dict, param_name):
+    keys = list(input_dict.keys())
+    params = {}
+    for key in keys:
+        params[f'{param_name}_{key}'] = input_dict[key]
+    return params
+
+
+def create_param_from_list(input_list, param_name):
+    params = {f'{param_name}': input_list}
+    return params
+
+
+def create_content(exact_dict, rhyme_dict, scansion_set):
+    content = {}
+    params = ['exact', 'rhyme', 'scansion']
+    for param in params:
+        pass
 
 db.create_all()
-
-
-
 # word_details_1 = (71786, 'LOVE', 'L AH1 V', 1, "'")
 # rhyme_dict = get_close_matches_rhyme('agitated')
 # scansion = get_close_matches_scansion('agitated')
@@ -260,4 +286,4 @@ db.create_all()
 # $ pip install -r requirements.txt
 # $ ./run.sh
 
-# print(all_together_now("pernicious"))
+# print(type(all_together_now('hello')))
