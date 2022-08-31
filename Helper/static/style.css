@@ -1,5 +1,5 @@
 .page{
-	font-family: Montserrat;
+	font-family: "Courier New', monospace;
 	font-style: normal;
 	font-size: 14pt;
 
@@ -13,46 +13,16 @@
 	padding-right: 3%;
 
     background-color: #B0E0E6;
-
 }
-.header{
-	border: 1px solid black;
-	border-radius: 1em;
-	overflow: hidden;
-	vertical-align: middle;
-	padding: 0.5%;
-	margin-bottom: none;
-
-}
-.content{
-	margin-top: 0%;
-}
-
 
 .inputbox{
 	padding: 0.25%;
 	margin-top: 0%;
 }
-.errors{
-	border-bottom: 1px solid black;
-	margin-top: 0%;
-}
-.error{
-	color: red;
-	font-weight: bold;
-}
-
-
-
-.toplevelinfo{
-	padding: 0.5%;
-	font-weight: bold;
-}
 
 .whitespace{
 	white-space: pre-line;
 }
-
 
 .varwidth{
 	width: 50%;
@@ -84,13 +54,10 @@
   margin-bottom:0;
 }
 
-.rounded{
-    border-radius: 1em;
-    padding: 1em;
-}
 
 .thin-border{
     border: 1px solid;
 }
+
 
 
