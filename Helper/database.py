@@ -38,8 +38,6 @@ def syllable_matches(word_object: words) -> list:
     """Get words from database that match syllable count."""
     results = words.query.filter(words.SYLLABLES == word_object.SYLLABLES, words.WORD != word_object.WORD).all()
     results = sorted(set(results), key=lambda x: x.WORD)
-    for word in results:
-        print(word.WORD)
     return results
 
 

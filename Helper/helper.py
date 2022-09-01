@@ -31,6 +31,8 @@ def get_exact_matches(word_object: words, syllable_count_matches: list, rhyme_di
     else:
         for key in list(rhyme_dict.keys()):
             exact_matches[key] = [word for word in syllable_count_matches if word in scansion_set and word in rhyme_dict[key]]
+            if len(exact_matches[key]) == 0:
+                exact_matches.pop(key)
         # if len(exact_matches[syl+1]) == 0:
         #     exact_matches.pop(syl+1)
     return exact_matches
