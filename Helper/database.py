@@ -1,12 +1,6 @@
-# functions to get necessary lists from database.
-# will make a db Class with functions for each of the word criteria.
-# these will return lists
-# import sqlalchemy
 import pkg_resources
 from Helper.app import app
 from flask_sqlalchemy import SQLAlchemy
-# from sqlalchemy import create_engine, Table
-# import re
 pkg_resources.require("SQLAlchemy==1.3.23")
 
 
@@ -31,7 +25,6 @@ def get_word_details(word: str) -> words:
     """Pulls word's row from database and returns a tuple of the values"""
     word = word.upper()
     result = words.query.filter(words.WORD == word).first()
-
     return result
 
 
@@ -44,80 +37,18 @@ def create_word_details_from_object(word_object: words) -> tuple:
 def syllable_matches(word_object: words) -> list:
     """Get words from database that match syllable count."""
     results = words.query.filter(words.SYLLABLES == word_object.SYLLABLES, words.WORD != word_object.WORD).all()
-    results = sorted(results, key=lambda x: x.WORD)
+    results = sorted(set(results), key=lambda x: x.WORD)
+    for word in results:
+        print(word.WORD)
     return results
 
 
-# syllables_to_list may be superfluous depending on matching multiple rhymes
-# unless it is changed to take in a list.. then it would be reusable
 def syllables_to_list(word_object: words) -> list:
     """convert syllables of a word to a list of syllables to use for matching rhymes"""
     # if there is only one syllable, join the entire pronunciation (not including first consonant)
     # if there are multiple... decide how to pair the ARPemes.
     pronunciation = word_object.PRONUNCIATION.split()
     return pronunciation
-
-# def syllable_to_match(word_details) -> str:
-#     """Parses syllables list to find last syllable"""
-#     pronunciation_list = syllables_to_list(word_details)
-#     # print(pronunciation_list)
-#     syllables = word_details[3]
-#     rhyme = ''
-#     # if there is only 1 syllable, we want from the first vowel sound to the end.
-#     # or do we -_- this may be able to work the same way forward & back
-#     if syllables == 1:
-#         i = 0
-#         while i < len(pronunciation_list):
-#             if pronunciation_list[i][-1].isdigit():
-#                 rhyme = ' '.join(pronunciation_list[i:])
-#                 # can use this when matching multiple syllables, for now only a string is needed
-#                 # pronunciation_list = pronunciation_list[:i]
-#                 break
-#             else:
-#                 i += 1
-#     # for multiple syllables, we need to get the string value of the final syllable.
-#     else:
-#         i = len(pronunciation_list) - 1
-#         while i >= 0:
-#             if pronunciation_list[i][-1].isdigit():
-#                 rhyme = ' '.join(pronunciation_list[i:])
-#                 # pronunciation_list = pronunciation_list[:i]
-#                 break
-#         else:
-#             i -= 1
-#     # pronunciation_list.append(rhyme)
-#     return rhyme
-
-# def syllable_to_match(syllables: int, pronunciation_list: list) -> str:
-#     """Parses syllables list to find last syllable"""
-#     # pronunciation_list = syllables_to_list(word_details)
-#     # print(pronunciation_list)
-#     # syllables = word_details[3]
-#     rhyme = ''
-#     # if there is only 1 syllable, we want from the first vowel sound to the end.
-#     # or do we -_- this may be able to work the same way forward & back
-#     if syllables == 1:
-#         i = 0
-#         while i < len(pronunciation_list):
-#             if pronunciation_list[i][-1].isdigit():
-#                 rhyme = ' '.join(pronunciation_list[i:])
-#                 # can use this when matching multiple syllables, for now only a string is needed
-#                 # pronunciation_list = pronunciation_list[:i]
-#                 break
-#             else:
-#                 i += 1
-#     # for multiple syllables, we need to get the string value of the final syllable.
-#     else:
-#         i = len(pronunciation_list) - 1
-#         while i >= 0:
-#             if pronunciation_list[i][-1].isdigit():
-#                 rhyme = ' '.join(pronunciation_list[i:])
-#                 # pronunciation_list = pronunciation_list[:i]
-#                 break
-#         else:
-#             i -= 1
-#     # pronunciation_list.append(rhyme)
-#     return rhyme
 
 
 def syllable_to_match(pronunciation_list: list) -> str:
@@ -139,17 +70,12 @@ def syllable_to_match(pronunciation_list: list) -> str:
     # pronunciation_list.append(rhyme)
     return rhyme
 
-# remember to pop the searched word when presenting the list later.
-# def match_syllable(word_object: words, syllable: str) -> list:
-#     results = words.query.filter(words.PRONUNCIATION.endswith(syllable), words.WORD != word_object.WORD).all()
-#     return  results
-
 
 def match_syllable(word_object: words, syllable: str, syllable_count_matches: list) -> list:
     # results = words.query.filter(words.PRONUNCIATION.endswith(syllable), words.WORD != word_object.WORD).all()
-    results = [word for word in syllable_count_matches if
-               word.PRONUNCIATION.endswith(syllable) and word.WORD != word_object.WORD]
-    return  results
+    results = {word for word in syllable_count_matches if
+               word.PRONUNCIATION.endswith(syllable) and word.WORD != word_object.WORD}
+    return sorted(results, key=lambda x: x.WORD)
 
 
 def get_rhyme_dict(word_object: words, syllable_count_matches: list) -> dict:

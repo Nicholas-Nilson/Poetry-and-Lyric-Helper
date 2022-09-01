@@ -1,4 +1,3 @@
-import os
 from flask import *
 from Helper.database import*
 import jinja2
@@ -20,9 +19,6 @@ def details_list_to_word_list(list):
     return [word.WORD for word in list]
 
 
-# check if try/except is needed for words not in db
-# be sure a dict can be passed to HTML.
-# for now, scansion matches will be converted to a single list
 def get_exact_matches(word_object: words, syllable_count_matches: list, rhyme_dict: dict, scansion_dict: dict) -> dict:
     """Compares syllable count matches, rhyme matches, and word stress matches
     and returns a list of words found in all three."""
@@ -39,7 +35,8 @@ def get_exact_matches(word_object: words, syllable_count_matches: list, rhyme_di
         #     exact_matches.pop(syl+1)
     return exact_matches
 
-
+# Function used when rhyme matches were found in the database and not
+# the words matching syllable count.
 # def get_close_matches_rhyme(word_object: words, syllable_count_matches: list) -> dict:
 #     """Given a word, searches the database and returns a dict of word objects where
 #     rhyme matches are found at various syllable counts."""
@@ -55,8 +52,6 @@ def get_exact_matches(word_object: words, syllable_count_matches: list, rhyme_di
 #     return close_matches_rhymes
 
 
-# going to compare performance with working with just the syllable match list
-# vs re-querying the database.
 def get_close_matches_rhyme(word_object: words, syllable_count_matches: list) -> dict:
     """Given a word, searches the database and returns a dict of word objects where
     rhyme matches are found at various syllable counts."""
@@ -66,7 +61,7 @@ def get_close_matches_rhyme(word_object: words, syllable_count_matches: list) ->
     for num in range(len(list(rhyme_matches.keys()))): # number of keys, to avoid out of range when matches weren't found.
         syllable_match_list = details_list_to_word_list(syllable_count_matches)
         rhyme_list = details_list_to_word_list(rhyme_matches[num + 1])
-        close_matches_rhymes[num+1] = [word for word in syllable_match_list if word in rhyme_list]
+        close_matches_rhymes[num+1] ={word for word in syllable_match_list if word in rhyme_list}
         if len(close_matches_rhymes[num+1]) == 0:
             close_matches_rhymes.pop(num+1)
     return close_matches_rhymes
@@ -103,8 +98,8 @@ def convert_words_to_camel_case(word):
     return word.title()
 
 
-def convert_list_to_camel_case(input_list: list) -> list:
-    output_list = [convert_words_to_camel_case(word) for word in input_list]
+def convert_list_to_camel_case(input_list: list) -> set:
+    output_list = {convert_words_to_camel_case(word) for word in input_list}
     return output_list
 
 
@@ -112,7 +107,7 @@ def convert_dict_to_camel_case(input_dict: dict) -> dict:
     keys = list(input_dict.keys())
     output_dict = {}
     for key in keys:
-        output_dict[key] = [convert_words_to_camel_case(word) for word in input_dict[key]]
+        output_dict[key] = sorted({convert_words_to_camel_case(word) for word in input_dict[key]})
     return output_dict
 
 
@@ -124,18 +119,14 @@ def convert_dict_to_camel_case(input_dict: dict) -> dict:
 #     return output
 
 
-# the one function to interact with the website:
-# get word_object, get syllable list, get scansion_dict, get rhyme_dict,
-# get exact_dict, convert scansion_dict to scansion_set, convert
-# scansion, rhyme, and exacts to camel case, and return those!
 def all_together_now(word):
+    """Given a word, finds all exact matches, rhyme matches, and stress
+    pattern matches and returns a list."""
     word = word
     word_object = get_word_details(word)
     # print(type(word_object))
     if word_object is None:
-        # word_not_found = 1
         return None
-        # return render_template("results.html", word_not_found=word_not_found, word="No matches found")
     else:
         syllables = word_object.SYLLABLES
         syllable_count_list = get_syllables_match_list(word_object)
@@ -159,10 +150,8 @@ def all_together_now(word):
         #     for word in rhyme_dict[key]:
         #         print(word)
         return [word, syllables, exact_dict, scansion_set, rhyme_dict, stresses]
-# above needs syllable count passed in!!!! so we know how long the params will be.
 
 
-# can 'GET' be passed in to all these functions?! May need to restructure.
 @app.route('/results', methods=['POST'])
 def search():
     word = request.form['word']
@@ -181,7 +170,6 @@ def search():
                                exact_dict=exact_dict, scansion_set=scansion_set,
                                rhyme_dict=rhyme_dict, stresses=stresses,
                                word_not_found=word_not_found)
-# above needs syllable count passed in!!!! so we know how long the params will be.
 
 
 @app.route('/<word>')
@@ -209,8 +197,6 @@ def index():
 #     app.run(host='0.0.0.0', port=port, debug=True)
 
 
-# have to create params like: exact_1, exact_2, exact_3
-# this... might actually be superfluous. time will tell.
 def create_params_from_dict(input_dict, param_name):
     keys = list(input_dict.keys())
     params = {}
@@ -230,7 +216,12 @@ def create_content(exact_dict, rhyme_dict, scansion_set):
     for param in params:
         pass
 
+
 db.create_all()
+
+
+# Debug
+
 # word_details_1 = (71786, 'LOVE', 'L AH1 V', 1, "'")
 # rhyme_dict = get_close_matches_rhyme('agitated')
 # scansion = get_close_matches_scansion('agitated')
