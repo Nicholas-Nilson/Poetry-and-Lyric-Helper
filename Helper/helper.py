@@ -85,9 +85,9 @@ def get_close_matches_scansion(word_object: words, syllable_count_matches) -> di
     if 's' in word_object.SCANSION:
         scansion_promoted = word_object.SCANSION.replace('s', "p")
         scansion_demoted = word_object.SCANSION.replace('s', 'u')
-        results_dict['promoted'] = [word.WORD for word in syllable_count_matches if word.SCANSION == scansion_promoted]
-        results_dict['demoted'] = [word.WORD for word in syllable_count_matches if word.SCANSION == scansion_demoted]
-    results_dict['exact'] = [word.WORD for word in syllable_count_matches if word.SCANSION == word_object.SCANSION]
+        results_dict['promoted'] = {word.WORD for word in syllable_count_matches if word.SCANSION == scansion_promoted}
+        results_dict['demoted'] = {word.WORD for word in syllable_count_matches if word.SCANSION == scansion_demoted}
+    results_dict['exact'] = {word.WORD for word in syllable_count_matches if word.SCANSION == word_object.SCANSION}
     return results_dict
 
 
