@@ -1,14 +1,9 @@
-# NEEDS: app name, SQL db location, site name, site description
 from flask import Flask
-# from flask_sqlalchemy import SQLAlchemy
 import os
-# from Helper.database import db
-# from os.path import join, dirname, realpath
 
 
 basedir = os.path.abspath(os.path.dirname(__file__))
-# print(basedir)
-# print('sqlite:///' + os.path.join(basedir) + '/data/words.db')
+
 app = Flask(__name__)
 app.config.update(
     SECRET_KEY='onomatopoeia',
