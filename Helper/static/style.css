@@ -12,7 +12,7 @@
 	padding-left: 3%;
 	padding-right: 3%;
 
-    background-color: #B0E0E6;
+    background-color: #fff0db;
 }
 
 .inputbox{
@@ -30,6 +30,7 @@
 
 .footer-basic {
   padding:40px 0;
+  background-color: #B0E0E6
 }
 
 .footer-basic ul {
@@ -58,6 +59,8 @@
 .thin-border{
     border: 1px solid;
 }
+
+
 
 
 

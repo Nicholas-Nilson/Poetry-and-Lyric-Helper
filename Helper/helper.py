@@ -99,8 +99,8 @@ def get_close_matches_scansion(word_object: Words, syllable_count_matches) -> di
 def convert_dict_to_set(input_dict: dict) -> list:
     """Flattens a dictionary in to a set.
     Is currently used to convert scansion matches dict to a single set."""
-    output = {word for d_list in input_dict.values() for word in d_list}
-    return sorted(output)
+    output = [word for d_list in input_dict.values() for word in d_list]
+    return set(output)
 
 
 def convert_words_to_camel_case(word):
@@ -141,7 +141,7 @@ def all_together_now(word):
         # and convert both dicts and the set to camel case
         rhyme_dict = convert_dict_to_camel_case(rhyme_dict)
         scansion_set = convert_dict_to_set(scansion_dict)
-        scansion_set = convert_list_to_camel_case(scansion_set)
+        scansion_set = sorted(convert_list_to_camel_case(scansion_set))
         exact_dict = convert_dict_to_camel_case(exact_dict)
         word = convert_words_to_camel_case(word_object.WORD)
         stresses = word_object.SCANSION
