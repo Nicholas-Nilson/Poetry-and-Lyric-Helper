@@ -197,7 +197,8 @@ db.create_all()
 
 
 """
-Code written before pass
+Code written before learning how to pass dicts to HTML
+
 def create_params_from_dict(input_dict, param_name):
     keys = list(input_dict.keys())
     params = {}
